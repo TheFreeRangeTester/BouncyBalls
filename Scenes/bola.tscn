@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://do2px6nbfh7yf"]
+
+[ext_resource type="Script" uid="uid://b1ij4vahdy07n" path="res://Scripts/bola.gd" id="1_17s4t"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_1nt6f"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_17s4t"]
+radius = 25.317978
+
+[node name="Bola" type="CharacterBody2D"]
+script = ExtResource("1_17s4t")
+upward_force = null
+side_force = null
+gravity = null
+max_speed = null
+reset_y = null
+wall_bounce = null
+min_bounce_speed = null
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="."]
+position = Vector2(1, 0)
+scale = Vector2(50, 50)
+mesh = SubResource("SphereMesh_1nt6f")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(1, 0)
+shape = SubResource("CircleShape2D_17s4t")
