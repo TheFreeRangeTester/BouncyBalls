@@ -16,12 +16,13 @@ size = Vector2(50, 2000)
 [node name="Bola" parent="." instance=ExtResource("1_jjgbg")]
 position = Vector2(307, 55)
 
-[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("bola", "start_label", "enemy_spawner", "score_label")]
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("bola", "start_label", "enemy_spawner", "score_label", "attack_power_label")]
 script = ExtResource("2_bo1nx")
 bola = NodePath("../Bola")
 start_label = NodePath("../CanvasLayer/UI/StartLabel")
 enemy_spawner = NodePath("../EnemySpawner")
 score_label = NodePath("../CanvasLayer/UI/ScoreLabel")
+attack_power_label = NodePath("../CanvasLayer/UI/AttackPowerLabel")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -49,6 +50,16 @@ offset_top = 20.0
 offset_right = 200.0
 offset_bottom = 50.0
 text = "Score: 0"
+horizontal_alignment = 0
+vertical_alignment = 1
+
+[node name="AttackPowerLabel" type="Label" parent="CanvasLayer/UI"]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 55.0
+offset_right = 200.0
+offset_bottom = 85.0
+text = "Power: 5"
 horizontal_alignment = 0
 vertical_alignment = 1
 
