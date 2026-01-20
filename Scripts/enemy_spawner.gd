@@ -4,6 +4,8 @@ extends Node2D
 @export var spawn_interval := 2.0
 @export var max_enemies := 5
 @export var min_spawn_y := 50.0
+@export var min_hp := 1  # HP mínimo para enemigos
+@export var max_hp := 8  # HP máximo para enemigos
 
 var max_spawn_y: float
 var enemy_height: float = 30.0  # Altura aproximada de un enemigo (basada en el scale)
@@ -57,6 +59,13 @@ func spawn_enemy():
 	var spawn_x = 60  # empieza al lado del límite izquierdo
 
 	enemy.global_position = Vector2(spawn_x, spawn_y)
+	
+	# Asignamos HP aleatorio al enemigo
+	var random_hp = randi_range(min_hp, max_hp)
+	if enemy.has_method("set_hp"):
+		enemy.set_hp(random_hp)
+	else:
+		enemy.hp = random_hp
 
 	# Agregamos al grupo
 	enemy.add_to_group("enemies")

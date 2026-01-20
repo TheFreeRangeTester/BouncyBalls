@@ -10,10 +10,17 @@ var direction := 1
 var min_x: float
 var max_x: float
 var is_dying := false  # Bandera para evitar múltiples llamadas a die()
+var hp_label: Label
 
 func _ready():
+	# Buscamos el label de HP
+	hp_label = get_node_or_null("HPLabel")
+	
 	# Calculamos los límites basándonos en las paredes de la escena
 	calculate_limits()
+	
+	# Actualizamos el label con el HP inicial
+	update_hp_display()
 
 func calculate_limits():
 	# Buscamos el nodo raíz de la escena (Main)
@@ -92,3 +99,13 @@ func pause():
 
 func resume():
 	set_physics_process(true)
+
+func set_hp(new_hp: int):
+	"""Establece el HP del enemigo y actualiza el display"""
+	hp = new_hp
+	update_hp_display()
+
+func update_hp_display():
+	"""Actualiza el label para mostrar el HP actual"""
+	if hp_label:
+		hp_label.text = str(hp)

@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 signal fell
+signal attack_power_changed(new_power: int)
 
 @export var upward_force := 750.0
 @export var side_force := 600.0
@@ -9,7 +10,9 @@ signal fell
 @export var reset_y := 800
 @export var wall_bounce := 1.5
 @export var min_bounce_speed := 150.0
+@export var initial_attack_power := 5  # Poder de ataque inicial
 
+var attack_power: int = initial_attack_power
 var has_fallen := false
 
 func _physics_process(delta):
@@ -29,7 +32,7 @@ func _physics_process(delta):
 			var enemy_id = collider.get_instance_id()
 			if not hit_enemies.has(enemy_id):
 				hit_enemies[enemy_id] = true
-				collider.take_damage(1)
+				handle_enemy_collision(collider)
 
 	# Rebote manual contra paredes
 	handle_wall_bounce_manual()
@@ -70,3 +73,40 @@ func pause_ball():
 func resume_ball():
 	set_physics_process(true)
 	has_fallen = false
+	# Reiniciamos el attack_power al reanudar
+	attack_power = initial_attack_power
+	emit_signal("attack_power_changed", attack_power)
+
+func handle_enemy_collision(enemy: Enemy):
+	"""
+	Maneja la colisión con un enemigo según la mecánica de enfrentamiento:
+	- Si attack_power >= hp → enemigo destruido, bola intacta
+	- Si attack_power < hp → la bola pierde (hp - attack_power) de attack_power
+	- Si attack_power llega a 0 → la bola muere
+	"""
+	if attack_power <= 0:
+		return  # Ya está muerta, no puede hacer nada
+	
+	var enemy_hp = enemy.hp
+	
+	if attack_power >= enemy_hp:
+		# Enemigo destruido, bola intacta
+		enemy.take_damage(enemy_hp)
+	else:
+		# La bola pierde la diferencia (hp - attack_power)
+		var power_lost = enemy_hp - attack_power
+		attack_power = max(0, attack_power - power_lost)
+		emit_signal("attack_power_changed", attack_power)
+		
+		# Destruimos el enemigo también (aunque la bola pierde poder)
+		enemy.take_damage(enemy_hp)
+		
+		# Si attack_power llegó a 0, la bola muere
+		if attack_power <= 0:
+			die_from_combat()
+
+func die_from_combat():
+	"""Mata la bola cuando su attack_power llega a 0"""
+	if not has_fallen:
+		has_fallen = true
+		emit_signal("fell")
