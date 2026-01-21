@@ -11,9 +11,13 @@ signal attack_power_changed(new_power: int)
 @export var wall_bounce := 1.5
 @export var min_bounce_speed := 150.0
 @export var initial_attack_power := 5  # Poder de ataque inicial
+@export var max_attack_power := 8  # Límite máximo de poder (igual al max_hp de enemigos)
 
 var attack_power: int = initial_attack_power
+var base_attack_power: int = initial_attack_power  # Poder base permanente
+var temporary_power_boost: int = 0  # Boost temporal actual
 var has_fallen := false
+var power_boost_timer: Timer
 
 func _physics_process(delta):
 	# Aplicamos gravedad
@@ -74,8 +78,15 @@ func resume_ball():
 	set_physics_process(true)
 	has_fallen = false
 	# Reiniciamos el attack_power al reanudar
+	base_attack_power = initial_attack_power
+	temporary_power_boost = 0
 	attack_power = initial_attack_power
 	emit_signal("attack_power_changed", attack_power)
+	# Cancelamos cualquier boost temporal activo
+	if power_boost_timer:
+		power_boost_timer.stop()
+		power_boost_timer.queue_free()
+		power_boost_timer = null
 
 func handle_enemy_collision(enemy: Enemy):
 	"""
@@ -110,3 +121,37 @@ func die_from_combat():
 	if not has_fallen:
 		has_fallen = true
 		emit_signal("fell")
+
+func _on_powerup_collected(power_amount: int):
+	"""Maneja la recolección de un power-up"""
+	# Aumentamos el boost temporal
+	temporary_power_boost += power_amount
+	
+	# Calculamos el nuevo poder total (respetando el límite máximo)
+	var new_power = base_attack_power + temporary_power_boost
+	attack_power = min(new_power, max_attack_power)
+	
+	emit_signal("attack_power_changed", attack_power)
+	
+	# Cancelamos el timer anterior si existe
+	if power_boost_timer:
+		power_boost_timer.stop()
+		power_boost_timer.queue_free()
+	
+	# Creamos un nuevo timer para el boost temporal (5 segundos)
+	power_boost_timer = Timer.new()
+	power_boost_timer.wait_time = 5.0
+	power_boost_timer.one_shot = true
+	power_boost_timer.timeout.connect(_on_power_boost_expired)
+	add_child(power_boost_timer)
+	power_boost_timer.start()
+
+func _on_power_boost_expired():
+	"""Se llama cuando expira el boost temporal"""
+	temporary_power_boost = 0
+	attack_power = base_attack_power
+	emit_signal("attack_power_changed", attack_power)
+	
+	if power_boost_timer:
+		power_boost_timer.queue_free()
+		power_boost_timer = null

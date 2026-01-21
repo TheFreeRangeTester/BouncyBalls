@@ -3,6 +3,7 @@ extends Node
 @export var bola: CharacterBody2D
 @export var start_label: Label
 @export var enemy_spawner: Node
+@export var powerup_spawner: Node
 @export var score_label: Label
 @export var attack_power_label: Label
 
@@ -41,6 +42,10 @@ func _on_ball_fell():
 	# Detenemos spawn de nuevos enemigos
 	if enemy_spawner:
 		enemy_spawner.pause_spawning()
+	
+	# Detenemos spawn de power-ups
+	if powerup_spawner:
+		powerup_spawner.pause_spawning()
 
 	# Pausamos enemigos existentes
 	for enemy in get_tree().get_nodes_in_group("enemies"):
@@ -69,6 +74,11 @@ func start_game():
 	if enemy_spawner:
 		enemy_spawner.reset()
 		enemy_spawner.resume_spawning()
+	
+	# Reiniciamos spawn y eliminamos power-ups
+	if powerup_spawner:
+		powerup_spawner.reset()
+		powerup_spawner.resume_spawning()
 
 	# Reanudamos la bola (esto también reinicia el attack_power)
 	bola.resume_ball()

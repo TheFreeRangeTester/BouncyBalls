@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://ch10bav4abg2f"]
+
+[ext_resource type="Script" uid="uid://bhwd2esb3ealt" path="res://Scripts/powerup.gd" id="1_nc0ue"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nc0ue"]
+size = Vector2(10, 23)
+
+[node name="PowerUp" type="Area2D"]
+script = ExtResource("1_nc0ue")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -0.5)
+shape = SubResource("RectangleShape2D_nc0ue")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+position = Vector2(-15, -15)
+color = Color(0.2, 0.8, 0.2, 1)
+polygon = PackedVector2Array(15, 0, 13.6603, 3.65972, 10, 3.65972, 10, 26.3403, 13.6603, 26.3403, 15, 30, 16.3397, 26.3403, 20, 26.3403, 20, 3.65972, 16.3397, 3.65972, 15, 0)
