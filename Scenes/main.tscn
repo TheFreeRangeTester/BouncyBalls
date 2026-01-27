@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://b43px2v1xgjy8"]
+[gd_scene load_steps=11 format=3 uid="uid://b43px2v1xgjy8"]
 
 [ext_resource type="PackedScene" uid="uid://do2px6nbfh7yf" path="res://Scenes/bola.tscn" id="1_jjgbg"]
 [ext_resource type="Script" uid="uid://cv8mxfrvtgfxw" path="res://Scripts/GameManager.gd" id="2_bo1nx"]
@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://ue8rr4rufbfd" path="res://Scenes/Enemy.tscn" id="4_jjvhh"]
 [ext_resource type="Script" uid="uid://b50hg5h3v50sf" path="res://Scripts/powerupspawner.gd" id="5_kry3j"]
 [ext_resource type="PackedScene" uid="uid://ch10bav4abg2f" path="res://Scenes/PowerUp.tscn" id="6_21xkr"]
+[ext_resource type="Script" path="res://Scripts/laser_spawner.gd" id="7_laser_spawner"]
+[ext_resource type="PackedScene" path="res://Scenes/Laser.tscn" id="8_laser"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bo1nx"]
 size = Vector2(50, 2000)
@@ -25,12 +27,13 @@ reset_y = 800
 wall_bounce = 1.5
 min_bounce_speed = 150.0
 
-[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("bola", "start_label", "enemy_spawner", "powerup_spawner", "score_label", "attack_power_label")]
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("bola", "start_label", "enemy_spawner", "powerup_spawner", "laser_spawner", "score_label", "attack_power_label")]
 script = ExtResource("2_bo1nx")
 bola = NodePath("../Bola")
 start_label = NodePath("../CanvasLayer/UI/StartLabel")
 enemy_spawner = NodePath("../EnemySpawner")
 powerup_spawner = NodePath("../PowerUpSpawner")
+laser_spawner = NodePath("../LaserSpawner")
 score_label = NodePath("../CanvasLayer/UI/ScoreLabel")
 attack_power_label = NodePath("../CanvasLayer/UI/AttackPowerLabel")
 
@@ -101,5 +104,13 @@ script = ExtResource("5_kry3j")
 powerup_scene = ExtResource("6_21xkr")
 
 [node name="Timer" type="Timer" parent="PowerUpSpawner"]
+wait_time = 10.0
+autostart = true
+
+[node name="LaserSpawner" type="Node2D" parent="."]
+script = ExtResource("7_laser_spawner")
+laser_scene = ExtResource("8_laser")
+
+[node name="Timer" type="Timer" parent="LaserSpawner"]
 wait_time = 10.0
 autostart = true

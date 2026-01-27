@@ -4,6 +4,7 @@ extends Node
 @export var start_label: Label
 @export var enemy_spawner: Node
 @export var powerup_spawner: Node
+@export var laser_spawner: Node
 @export var score_label: Label
 @export var attack_power_label: Label
 
@@ -46,11 +47,20 @@ func _on_ball_fell():
 	# Detenemos spawn de power-ups
 	if powerup_spawner:
 		powerup_spawner.pause_spawning()
+	
+	# Detenemos spawn de láseres
+	if laser_spawner:
+		laser_spawner.pause_spawning()
 
 	# Pausamos enemigos existentes
 	for enemy in get_tree().get_nodes_in_group("enemies"):
 		if enemy.has_method("pause"):
 			enemy.pause()
+	
+	# Pausamos láseres existentes
+	for laser in get_tree().get_nodes_in_group("lasers"):
+		if laser.has_method("pause"):
+			laser.pause()
 
 	start_label.visible = true
 
@@ -79,6 +89,11 @@ func start_game():
 	if powerup_spawner:
 		powerup_spawner.reset()
 		powerup_spawner.resume_spawning()
+	
+	# Reiniciamos spawn y eliminamos láseres
+	if laser_spawner:
+		laser_spawner.reset()
+		laser_spawner.resume_spawning()
 
 	# Reanudamos la bola (esto también reinicia el attack_power)
 	bola.resume_ball()

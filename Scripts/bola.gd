@@ -155,3 +155,16 @@ func _on_power_boost_expired():
 	if power_boost_timer:
 		power_boost_timer.queue_free()
 		power_boost_timer = null
+
+func _on_laser_hit(power_loss: int):
+	"""Maneja el impacto con un láser peligroso"""
+	if attack_power <= 0:
+		return  # Ya está muerta
+	
+	# Reducimos el poder de la bola
+	attack_power = max(0, attack_power - power_loss)
+	emit_signal("attack_power_changed", attack_power)
+	
+	# Si el poder llega a 0, la bola muere
+	if attack_power <= 0:
+		die_from_combat()
