@@ -6,6 +6,7 @@ extends Node
 @export var powerup_spawner: Node
 @export var laser_spawner: Node
 @export var misil_spawner: Node
+@export var progression_manager: Node
 @export var score_label: Label
 @export var attack_power_label: Label
 
@@ -103,12 +104,12 @@ func start_game():
 	# Reiniciamos spawn y eliminamos láseres
 	if laser_spawner:
 		laser_spawner.reset()
-		laser_spawner.resume_spawning()
+		# No lo activamos aquí, el ProgressionManager lo hará según el score
 	
 	# Reiniciamos spawn y eliminamos misiles
 	if misil_spawner:
 		misil_spawner.reset()
-		misil_spawner.resume_spawning()
+		# No lo activamos aquí, el ProgressionManager lo hará según el score
 
 	# Reanudamos la bola (esto también reinicia el attack_power)
 	bola.resume_ball()
@@ -118,6 +119,13 @@ func start_game():
 	
 	# Reconectamos señales de enemigos
 	connect_enemy_signals()
+	
+	# Reiniciamos el ProgressionManager (esto configurará todo según el score inicial)
+	if progression_manager and progression_manager.has_method("reset"):
+		progression_manager.reset()
+		# Actualizamos con el estado inicial (score = 0)
+		var initial_power = bola.get("attack_power") if bola else 5
+		progression_manager.update_progression(score, initial_power)
 
 func connect_enemy_signals():
 	# Desconectamos señales anteriores para evitar duplicados
@@ -129,6 +137,11 @@ func connect_enemy_signals():
 func _on_enemy_destroyed():
 	score += 1
 	update_score_display()
+	
+	# Notificamos al ProgressionManager del cambio de score
+	if progression_manager and progression_manager.has_method("update_progression"):
+		var current_power = bola.get("attack_power") if bola else 5
+		progression_manager.update_progression(score, current_power)
 
 func update_score_display():
 	if score_label:
@@ -143,3 +156,7 @@ func update_attack_power_display():
 
 func _on_attack_power_changed(new_power: int):
 	update_attack_power_display()
+	
+	# Notificamos al ProgressionManager del cambio de poder
+	if progression_manager and progression_manager.has_method("update_progression"):
+		progression_manager.update_progression(score, new_power)

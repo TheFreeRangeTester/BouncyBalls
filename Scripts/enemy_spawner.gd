@@ -97,3 +97,13 @@ func reset():
 	# Eliminamos todos los enemigos que aún existen
 	for enemy in get_tree().get_nodes_in_group("enemies"):
 		enemy.queue_free()
+
+func set_difficulty(new_min_hp: int, new_max_hp: int, new_spawn_interval: float):
+	"""Ajusta la dificultad de los enemigos según la progresión"""
+	min_hp = new_min_hp
+	max_hp = new_max_hp
+	spawn_interval = new_spawn_interval
+	
+	# Actualizamos el timer si existe
+	if timer:
+		timer.wait_time = spawn_interval

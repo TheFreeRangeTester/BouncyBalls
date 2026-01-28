@@ -10,7 +10,8 @@ func _ready():
 	randomize()
 	timer.wait_time = spawn_interval
 	timer.timeout.connect(_on_timeout)
-	timer.start()
+	# NO iniciamos el timer automáticamente - el ProgressionManager lo controlará
+	# timer.start()  # Comentado - se iniciará cuando el ProgressionManager lo active
 
 func _on_timeout():
 	var misiles = get_tree().get_nodes_in_group("misiles")
@@ -70,3 +71,7 @@ func reset():
 	# Eliminamos todos los misiles existentes
 	for misil in get_tree().get_nodes_in_group("misiles"):
 		misil.queue_free()
+
+func set_max_misiles(new_max: int):
+	"""Ajusta la cantidad máxima de misiles activos según la progresión"""
+	max_misiles = max(0, new_max)

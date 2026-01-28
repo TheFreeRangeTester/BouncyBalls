@@ -10,7 +10,8 @@ func _ready():
 	randomize()
 	timer.wait_time = spawn_interval
 	timer.timeout.connect(_on_timeout)
-	timer.start()
+	# NO iniciamos el timer automáticamente - el ProgressionManager lo controlará
+	# timer.start()  # Comentado - se iniciará cuando el ProgressionManager lo active
 
 func _on_timeout():
 	var lasers = get_tree().get_nodes_in_group("lasers")
