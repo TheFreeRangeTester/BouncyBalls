@@ -26,7 +26,6 @@ upward_force = 750.0
 side_force = 600.0
 gravity = 1200.0
 max_speed = 900.0
-reset_y = 800
 wall_bounce = 1.5
 min_bounce_speed = 150.0
 

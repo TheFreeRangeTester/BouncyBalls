@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bq8xr5m2n3k4p"]
 
-[ext_resource type="Script" path="res://Scripts/misil.gd" id="1_misil"]
+[ext_resource type="Script" uid="uid://c4q44qt4wqey" path="res://Scripts/misil.gd" id="1_misil"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_misil"]
 size = Vector2(1, 1.5)
@@ -9,11 +9,9 @@ size = Vector2(1, 1.5)
 script = ExtResource("1_misil")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 0)
 scale = Vector2(15, 15)
 shape = SubResource("RectangleShape2D_misil")
 
 [node name="Polygon2D" type="Polygon2D" parent="."]
-position = Vector2(0, 0)
 color = Color(1, 0.2, 0.8, 1)
 polygon = PackedVector2Array(0, -8, -5, 5, 0, 0, 5, 5, 0, -8)

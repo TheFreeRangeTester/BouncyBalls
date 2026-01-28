@@ -9,3 +9,7 @@ res://Scripts/enemy_spawner.gd
 res://Scripts/ProgressionManager.gd
 res://Scripts/laser_spawner.gd
 res://Scenes/main.tscn
+res://Scenes/bola.tscn
+res://Scenes/Enemy.tscn
+res://Scenes/Laser.tscn
+res://Scenes/PowerUp.tscn
