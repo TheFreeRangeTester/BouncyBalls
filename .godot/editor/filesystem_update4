@@ -4,3 +4,8 @@ res://Scripts/powerupspawner.gd
 res://Scripts/GameManager.gd
 res://Scenes/Misil.tscn
 res://Scripts/misil.gd
+res://Scripts/misil_spawner.gd
+res://Scripts/enemy_spawner.gd
+res://Scripts/ProgressionManager.gd
+res://Scripts/laser_spawner.gd
+res://Scenes/main.tscn

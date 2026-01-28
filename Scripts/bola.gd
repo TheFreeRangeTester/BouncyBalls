@@ -184,3 +184,29 @@ func _on_misil_hit(power_loss: int):
 	# Si el poder llega a 0, la bola muere
 	if attack_power <= 0:
 		die_from_combat()
+
+func update_visual(score: int, power: int):
+	"""Actualiza la apariencia visual de la bola según score (niveles)"""
+	var mesh_instance = get_node_or_null("MeshInstance2D")
+	if not mesh_instance:
+		return
+	
+	# Log del poder (para futuro uso cuando implementemos sprites de daño)
+	# print("Bola - Poder actual: ", power, " / ", max_attack_power)
+	
+	# Cambiamos el color según el score (niveles)
+	# De blanco (score 0) a negro (score máximo)
+	# Usamos un máximo razonable para la progresión (por ejemplo, 50 puntos = negro completo)
+	var max_score_for_black = 50.0
+	var score_factor = min(float(score) / max_score_for_black, 1.0)  # Normalizado hasta 50 puntos
+	
+	# Interpolamos entre blanco (1, 1, 1) y negro (0, 0, 0)
+	var white_color = Color(1.0, 1.0, 1.0, 1.0)  # Blanco inicial
+	var black_color = Color(0.0, 0.0, 0.0, 1.0)  # Negro máximo
+	var current_color = white_color.lerp(black_color, score_factor)
+	
+	mesh_instance.modulate = current_color
+	
+	# Mantenemos el tamaño original (sin cambios)
+	var base_scale = Vector2(50, 50)
+	mesh_instance.scale = base_scale

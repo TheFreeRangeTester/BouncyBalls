@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://b43px2v1xgjy8"]
+[gd_scene load_steps=14 format=3 uid="uid://b43px2v1xgjy8"]
 
 [ext_resource type="PackedScene" uid="uid://do2px6nbfh7yf" path="res://Scenes/bola.tscn" id="1_jjgbg"]
 [ext_resource type="Script" uid="uid://cv8mxfrvtgfxw" path="res://Scripts/GameManager.gd" id="2_bo1nx"]
@@ -6,10 +6,11 @@
 [ext_resource type="PackedScene" uid="uid://ue8rr4rufbfd" path="res://Scenes/Enemy.tscn" id="4_jjvhh"]
 [ext_resource type="Script" uid="uid://b50hg5h3v50sf" path="res://Scripts/powerupspawner.gd" id="5_kry3j"]
 [ext_resource type="PackedScene" uid="uid://ch10bav4abg2f" path="res://Scenes/PowerUp.tscn" id="6_21xkr"]
-[ext_resource type="Script" path="res://Scripts/laser_spawner.gd" id="7_laser_spawner"]
-[ext_resource type="PackedScene" path="res://Scenes/Laser.tscn" id="8_laser"]
-[ext_resource type="Script" path="res://Scripts/misil_spawner.gd" id="9_misil_spawner"]
+[ext_resource type="Script" uid="uid://cup7hkytgme57" path="res://Scripts/laser_spawner.gd" id="7_laser_spawner"]
+[ext_resource type="PackedScene" uid="uid://c8x7v2k3n4m5p" path="res://Scenes/Laser.tscn" id="8_laser"]
+[ext_resource type="Script" uid="uid://bd5r55ru5xrf0" path="res://Scripts/misil_spawner.gd" id="9_misil_spawner"]
 [ext_resource type="PackedScene" uid="uid://bq8xr5m2n3k4p" path="res://Scenes/Misil.tscn" id="10_misil"]
+[ext_resource type="Script" uid="uid://ce6s66sv6ysg1" path="res://Scripts/ProgressionManager.gd" id="11_progression"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bo1nx"]
 size = Vector2(50, 2000)
@@ -29,7 +30,7 @@ reset_y = 800
 wall_bounce = 1.5
 min_bounce_speed = 150.0
 
-[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("bola", "start_label", "enemy_spawner", "powerup_spawner", "laser_spawner", "misil_spawner", "score_label", "attack_power_label")]
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("bola", "start_label", "enemy_spawner", "powerup_spawner", "laser_spawner", "misil_spawner", "progression_manager", "score_label", "attack_power_label")]
 script = ExtResource("2_bo1nx")
 bola = NodePath("../Bola")
 start_label = NodePath("../CanvasLayer/UI/StartLabel")
@@ -37,6 +38,7 @@ enemy_spawner = NodePath("../EnemySpawner")
 powerup_spawner = NodePath("../PowerUpSpawner")
 laser_spawner = NodePath("../LaserSpawner")
 misil_spawner = NodePath("../MisilSpawner")
+progression_manager = NodePath("../ProgressionManager")
 score_label = NodePath("../CanvasLayer/UI/ScoreLabel")
 attack_power_label = NodePath("../CanvasLayer/UI/AttackPowerLabel")
 
@@ -116,7 +118,6 @@ laser_scene = ExtResource("8_laser")
 
 [node name="Timer" type="Timer" parent="LaserSpawner"]
 wait_time = 10.0
-autostart = true
 
 [node name="MisilSpawner" type="Node2D" parent="."]
 script = ExtResource("9_misil_spawner")
@@ -124,4 +125,10 @@ misil_scene = ExtResource("10_misil")
 
 [node name="Timer" type="Timer" parent="MisilSpawner"]
 wait_time = 5.0
-autostart = true
+
+[node name="ProgressionManager" type="Node" parent="." node_paths=PackedStringArray("enemy_spawner", "laser_spawner", "misil_spawner", "bola")]
+script = ExtResource("11_progression")
+enemy_spawner = NodePath("../EnemySpawner")
+laser_spawner = NodePath("../LaserSpawner")
+misil_spawner = NodePath("../MisilSpawner")
+bola = NodePath("../Bola")
