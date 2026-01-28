@@ -1,8 +1,0 @@
-res://Scenes/PowerUp.tscn
-res://Scripts/bola.gd
-res://Scripts/GameManager.gd
-res://Scripts/powerup.gd
-res://Scripts/powerupspawner.gd
-res://Scenes/Laser.tscn
-res://Scripts/laser.gd
-res://Scripts/laser_spawner.gd
