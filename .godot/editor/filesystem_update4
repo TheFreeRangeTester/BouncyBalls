@@ -1,3 +1,6 @@
 res://Scripts/bola.gd
 res://Scripts/powerup.gd
 res://Scripts/powerupspawner.gd
+res://Scripts/GameManager.gd
+res://Scenes/Misil.tscn
+res://Scripts/misil.gd
