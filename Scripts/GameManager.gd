@@ -5,6 +5,7 @@ extends Node
 @export var enemy_spawner: Node
 @export var powerup_spawner: Node
 @export var laser_spawner: Node
+@export var misil_spawner: Node
 @export var score_label: Label
 @export var attack_power_label: Label
 
@@ -51,6 +52,10 @@ func _on_ball_fell():
 	# Detenemos spawn de láseres
 	if laser_spawner:
 		laser_spawner.pause_spawning()
+	
+	# Detenemos spawn de misiles
+	if misil_spawner:
+		misil_spawner.pause_spawning()
 
 	# Pausamos enemigos existentes
 	for enemy in get_tree().get_nodes_in_group("enemies"):
@@ -61,6 +66,11 @@ func _on_ball_fell():
 	for laser in get_tree().get_nodes_in_group("lasers"):
 		if laser.has_method("pause"):
 			laser.pause()
+	
+	# Pausamos misiles existentes
+	for misil in get_tree().get_nodes_in_group("misiles"):
+		if misil.has_method("pause"):
+			misil.pause()
 
 	start_label.visible = true
 
@@ -94,6 +104,11 @@ func start_game():
 	if laser_spawner:
 		laser_spawner.reset()
 		laser_spawner.resume_spawning()
+	
+	# Reiniciamos spawn y eliminamos misiles
+	if misil_spawner:
+		misil_spawner.reset()
+		misil_spawner.resume_spawning()
 
 	# Reanudamos la bola (esto también reinicia el attack_power)
 	bola.resume_ball()
