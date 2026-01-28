@@ -3,13 +3,13 @@ extends CharacterBody2D
 signal fell
 signal attack_power_changed(new_power: int)
 
-@export var upward_force := 750.0
-@export var side_force := 600.0
-@export var gravity := 1200.0
-@export var max_speed := 900.0
+@export var upward_force := 500.0  # Reducido de 750 para menos rebote vertical
+@export var side_force := 400.0  # Reducido de 600 para menos impulso lateral
+@export var gravity := 2400.0  # Aumentado para más control y peso
+@export var max_speed := 700.0  # Reducido de 900 para más control
 @export var reset_y := 800
-@export var wall_bounce := 1.5
-@export var min_bounce_speed := 150.0
+@export var wall_bounce := 1.2  # Reducido de 1.5 para rebotes más suaves
+@export var min_bounce_speed := 100.0  # Reducido de 150 para menos velocidad mínima
 @export var initial_attack_power := 5  # Poder de ataque inicial
 @export var max_attack_power := 8  # Límite máximo de poder (igual al max_hp de enemigos)
 
@@ -64,9 +64,12 @@ func juggle_impulse():
 	var dx = tap_pos.x - global_position.x
 	var horizontal = clamp(dx / 300.0, -1.0, 1.0)
 
+	# Aplicamos el impulso de forma más controlada
+	# En lugar de establecer directamente, añadimos al impulso existente pero con límite
 	velocity.y = -upward_force
 	velocity.x -= horizontal * side_force
-
+	
+	# Limitamos la velocidad máxima para evitar rebotes excesivos
 	if velocity.length() > max_speed:
 		velocity = velocity.normalized() * max_speed
 

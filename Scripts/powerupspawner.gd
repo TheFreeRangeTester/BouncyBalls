@@ -74,10 +74,24 @@ func calculate_spawn_limits():
 		max_spawn_x = min_spawn_x + 100
 
 func _on_timeout():
-	# Solo spawneamos si no hay power-ups en la escena
+	# Solo spawneamos si no hay power-ups visibles en la escena
 	var existing_powerups = get_tree().get_nodes_in_group("powerups")
-	if existing_powerups.size() > 0:
-		return  # Ya hay uno, esperamos al siguiente ciclo
+	
+	# Filtramos solo los powerups que están dentro de la pantalla visible
+	var visible_powerups = []
+	var viewport = get_viewport_rect()
+	var margin = 100.0
+	
+	for powerup in existing_powerups:
+		if is_instance_valid(powerup):
+			var pos = powerup.global_position
+			# Verificamos si está dentro de la pantalla visible (con margen)
+			if pos.x >= -margin and pos.x <= viewport.size.x + margin and \
+			   pos.y >= -margin and pos.y <= viewport.size.y + margin:
+				visible_powerups.append(powerup)
+	
+	if visible_powerups.size() > 0:
+		return  # Ya hay uno visible, esperamos al siguiente ciclo
 	
 	spawn_powerup()
 
