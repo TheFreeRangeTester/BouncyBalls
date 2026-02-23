@@ -18,6 +18,8 @@ var base_attack_power: int = initial_attack_power  # Poder base permanente
 var temporary_power_boost: int = 0  # Boost temporal actual
 var has_fallen := false
 var power_boost_timer: Timer
+var has_shield := false
+var shield_timer: Timer
 
 func _physics_process(delta):
 	# Aplicamos gravedad
@@ -90,6 +92,9 @@ func resume_ball():
 		power_boost_timer.stop()
 		power_boost_timer.queue_free()
 		power_boost_timer = null
+	
+	# Desactivamos el escudo si estaba activo
+	_deactivate_shield()
 
 func handle_enemy_collision(enemy: Enemy):
 	"""
@@ -164,6 +169,10 @@ func _on_laser_hit(power_loss: int):
 	if attack_power <= 0:
 		return  # Ya está muerta
 	
+	if has_shield:
+		_absorb_hit_with_shield()
+		return
+	
 	# Reducimos el poder de la bola
 	attack_power = max(0, attack_power - power_loss)
 	emit_signal("attack_power_changed", attack_power)
@@ -177,6 +186,10 @@ func _on_misil_hit(power_loss: int):
 	if attack_power <= 0:
 		return  # Ya está muerta
 	
+	if has_shield:
+		_absorb_hit_with_shield()
+		return
+	
 	# Reducimos el poder de la bola
 	attack_power = max(0, attack_power - power_loss)
 	emit_signal("attack_power_changed", attack_power)
@@ -184,6 +197,60 @@ func _on_misil_hit(power_loss: int):
 	# Si el poder llega a 0, la bola muere
 	if attack_power <= 0:
 		die_from_combat()
+
+func _absorb_hit_with_shield():
+	"""El escudo absorbe el impacto y desaparece"""
+	has_shield = false
+	if shield_timer:
+		shield_timer.stop()
+		shield_timer.queue_free()
+		shield_timer = null
+	
+	var aura = get_node_or_null("ShieldAura")
+	if aura and aura is ShieldAura:
+		aura.play_absorb_animation()
+
+func _on_shield_collected(duration: float):
+	"""Activa el escudo al recoger el power-up"""
+	# Si ya hay escudo, reiniciamos el timer
+	if shield_timer:
+		shield_timer.stop()
+		shield_timer.queue_free()
+	
+	has_shield = true
+	shield_timer = Timer.new()
+	shield_timer.wait_time = duration
+	shield_timer.one_shot = true
+	shield_timer.timeout.connect(_on_shield_expired)
+	add_child(shield_timer)
+	shield_timer.start()
+	
+	var aura = get_node_or_null("ShieldAura")
+	if aura and aura is ShieldAura:
+		aura.activate(duration)
+
+func _on_shield_expired():
+	"""El escudo expiró por tiempo"""
+	has_shield = false
+	if shield_timer:
+		shield_timer.queue_free()
+	shield_timer = null
+	
+	var aura = get_node_or_null("ShieldAura")
+	if aura and aura is ShieldAura:
+		aura._deactivate()
+
+func _deactivate_shield():
+	"""Desactiva el escudo (ej. al reiniciar partida)"""
+	has_shield = false
+	if shield_timer:
+		shield_timer.stop()
+		shield_timer.queue_free()
+		shield_timer = null
+	
+	var aura = get_node_or_null("ShieldAura")
+	if aura and aura is ShieldAura:
+		aura._deactivate()
 
 func update_visual(score: int, power: int):
 	"""Actualiza la apariencia visual de la bola según score (niveles)"""
