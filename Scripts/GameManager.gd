@@ -1,7 +1,8 @@
 extends Node
 
 @export var bola: CharacterBody2D
-@export var start_label: Label
+@export var start_screen: Control
+@export var debug_panel: Control
 @export var enemy_spawner: Node
 @export var powerup_spawner: Node
 @export var laser_spawner: Node
@@ -19,6 +20,7 @@ enum GameState {
 }
 
 var state: GameState = GameState.PLAYING
+var debug_mode := false
 
 func _ready():
 	spawn_position = bola.global_position
@@ -28,7 +30,31 @@ func _ready():
 	if bola.has_signal("attack_power_changed"):
 		bola.attack_power_changed.connect(_on_attack_power_changed)
 	
-	start_label.visible = false
+	# Pantalla inicial: pausamos y mostramos Play / Debug mode
+	state = GameState.WAITING_TO_START
+	bola.pause_ball()
+	bola.global_position = spawn_position
+	if start_screen:
+		start_screen.visible = true
+	if debug_panel:
+		debug_panel.visible = false
+	
+	# Conectar botones de la pantalla inicial
+	if start_screen and start_screen.has_signal("play_pressed"):
+		start_screen.play_pressed.connect(_on_play_pressed)
+	if start_screen and start_screen.has_signal("debug_mode_pressed"):
+		start_screen.debug_mode_pressed.connect(_on_debug_mode_pressed)
+	
+	# Pausar spawners hasta que empiece el juego
+	if enemy_spawner:
+		enemy_spawner.pause_spawning()
+	if powerup_spawner:
+		powerup_spawner.pause_spawning()
+	if laser_spawner:
+		laser_spawner.pause_spawning()
+	if misil_spawner:
+		misil_spawner.pause_spawning()
+	
 	update_score_display()
 	update_attack_power_display()
 	
@@ -73,18 +99,33 @@ func _on_ball_fell():
 		if misil.has_method("pause"):
 			misil.pause()
 
-	start_label.visible = true
+	start_screen.visible = true
+	if debug_panel and debug_mode:
+		debug_panel.visible = false
+		debug_mode = false
 
-func _input(event):
-	if state != GameState.WAITING_TO_START:
-		return
+func _on_play_pressed():
+	start_game()
 
-	if (event is InputEventScreenTouch and event.pressed) \
-	or (event is InputEventMouseButton and event.pressed):
-		start_game()
+func _on_debug_mode_pressed():
+	start_debug_mode()
+
+func start_debug_mode():
+	debug_mode = true
+	if start_screen:
+		start_screen.visible = false
+	if debug_panel:
+		debug_panel.visible = true
+	
+	state = GameState.PLAYING
+	# En debug no activamos spawners; el usuario usa "Spawn escenario"
 
 func start_game():
-	start_label.visible = false
+	if start_screen:
+		start_screen.visible = false
+	if debug_panel:
+		debug_panel.visible = false
+	debug_mode = false
 	state = GameState.PLAYING
 	
 	# Reiniciamos los puntos

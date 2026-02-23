@@ -3,6 +3,8 @@ extends Node2D
 @export var powerup_scene: PackedScene
 @export var shield_powerup_scene: PackedScene  # Opcional: power-up de escudo
 @export var shield_spawn_chance := 0.25  # Probabilidad 0-1 de spawear escudo (si está asignado)
+@export var poison_powerup_scene: PackedScene  # Opcional: power-up de veneno
+@export var poison_spawn_chance := 0.25  # Probabilidad 0-1 de spawear veneno
 var progression_manager: Node  # Para saber cuándo los láseres están activos (escudo solo desde entonces)
 @export var spawn_interval := 10.0  # Cada 10 segundos
 @export var min_spawn_y := 50.0
@@ -21,8 +23,7 @@ func _ready():
 	timer.timeout.connect(_on_timeout)
 	calculate_spawn_limits()
 	progression_manager = get_parent().get_node_or_null("ProgressionManager")
-	# Iniciamos el timer (se pausará si es necesario desde GameManager)
-	timer.start()
+	# NO iniciamos el timer aquí - solo cuando GameManager llama resume_spawning() al empezar
 
 func calculate_spawn_limits():
 	# Obtenemos los límites basándonos en el viewport y las paredes
@@ -108,10 +109,19 @@ func _are_lasers_enabled() -> bool:
 		return false
 	return pm.difficulty_stages[pm.current_stage].lasers_enabled
 
+func _are_high_level_enemies_enabled() -> bool:
+	"""Solo spawear veneno cuando ya aparecen enemigos de más nivel (stage >= 1, score >= 10)"""
+	var pm = progression_manager if progression_manager else get_parent().get_node_or_null("ProgressionManager")
+	if not pm or not "current_stage" in pm:
+		return false
+	return pm.current_stage >= 1
+
 func spawn_powerup():
 	var scene_to_spawn: PackedScene
 	if shield_powerup_scene and _are_lasers_enabled() and randf() < shield_spawn_chance:
 		scene_to_spawn = shield_powerup_scene
+	elif poison_powerup_scene and _are_high_level_enemies_enabled() and randf() < poison_spawn_chance:
+		scene_to_spawn = poison_powerup_scene
 	else:
 		scene_to_spawn = powerup_scene
 	
@@ -147,15 +157,19 @@ func spawn_powerup():
 			powerup.powerup_collected.connect(bola._on_powerup_collected)
 		elif powerup.has_signal("shield_collected"):
 			powerup.shield_collected.connect(bola._on_shield_collected)
+		elif powerup.has_signal("poison_collected"):
+			powerup.poison_collected.connect(bola._on_poison_collected)
 	
 	get_parent().add_child(powerup)
 	print("Power-up spawneado en: ", powerup.global_position)
 
 func pause_spawning():
-	timer.stop()
+	if timer:
+		timer.stop()
 
 func resume_spawning():
-	timer.start()
+	if timer:
+		timer.start()
 
 func reset():
 	pause_spawning()

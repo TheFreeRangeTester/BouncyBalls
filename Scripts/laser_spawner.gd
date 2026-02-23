@@ -53,10 +53,12 @@ func spawn_laser():
 	print("Láser spawneado diagonalmente")
 
 func pause_spawning():
-	timer.stop()
+	if timer:
+		timer.stop()
 
 func resume_spawning():
-	timer.start()
+	if timer:
+		timer.start()
 
 func reset():
 	pause_spawning()

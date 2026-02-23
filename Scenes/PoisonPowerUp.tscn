@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://uunrbokr3jn1"]
+
+[ext_resource type="Script" path="res://Scripts/poison_powerup.gd" id="1_poison"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_poison"]
+size = Vector2(24, 28)
+
+[node name="PoisonPowerUp" type="Area2D"]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_poison")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -1)
+shape = SubResource("RectangleShape2D_poison")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+position = Vector2(-15, -15)
+color = Color(0.35, 0.85, 0.25, 1)
+polygon = PackedVector2Array(15, 2, 28, 15, 15, 28, 2, 15)

@@ -20,8 +20,11 @@ var has_fallen := false
 var power_boost_timer: Timer
 var has_shield := false
 var shield_timer: Timer
+var poison_active := false  # Estado de un solo uso: al chocar con enemigo más fuerte, aplica veneno sin recibir daño
+var poison_grace_timer := 0.0  # Tras aplicar veneno, breve inmunidad para evitar daño por colisiones múltiples (ej. impacto desde arriba)
 
 func _physics_process(delta):
+	poison_grace_timer = max(0.0, poison_grace_timer - delta)
 	# Aplicamos gravedad
 	velocity.y += gravity * delta
 
@@ -30,6 +33,7 @@ func _physics_process(delta):
 
 	# Detectamos colisiones (usamos un set para evitar dañar el mismo enemigo múltiples veces en un frame)
 	var hit_enemies = {}
+	var poison_used_this_frame := false
 	for i in range(get_slide_collision_count()):
 		var collision = get_slide_collision(i)
 		var collider = collision.get_collider()
@@ -38,7 +42,9 @@ func _physics_process(delta):
 			var enemy_id = collider.get_instance_id()
 			if not hit_enemies.has(enemy_id):
 				hit_enemies[enemy_id] = true
-				handle_enemy_collision(collider)
+				var used_poison = handle_enemy_collision(collider, poison_used_this_frame)
+				if used_poison:
+					poison_used_this_frame = true
 
 	# Rebote manual contra paredes
 	handle_wall_bounce_manual()
@@ -95,22 +101,43 @@ func resume_ball():
 	
 	# Desactivamos el escudo si estaba activo
 	_deactivate_shield()
+	
+	# Desactivamos el veneno si estaba activo
+	poison_active = false
+	poison_grace_timer = 0.0
+	_deactivate_poison_aura()
 
-func handle_enemy_collision(enemy: Enemy):
+func handle_enemy_collision(enemy: Enemy, poison_used_this_frame: bool = false) -> bool:
 	"""
 	Maneja la colisión con un enemigo según la mecánica de enfrentamiento:
 	- Si attack_power >= hp → enemigo destruido, bola intacta
-	- Si attack_power < hp → la bola pierde (hp - attack_power) de attack_power
+	- Si attack_power < hp y poison_active → aplica veneno al enemigo, bola no recibe daño, consume veneno
+	- Si attack_power < hp sin veneno → la bola pierde poder y el enemigo se destruye
+	- Si poison_used_this_frame → ya usamos veneno este frame, no recibimos daño de otros enemigos
 	- Si attack_power llega a 0 → la bola muere
+	Retorna true si se aplicó veneno (para proteger de otras colisiones en el mismo frame).
 	"""
 	if attack_power <= 0:
-		return  # Ya está muerta, no puede hacer nada
+		return false  # Ya está muerta, no puede hacer nada
 	
 	var enemy_hp = enemy.hp
 	
 	if attack_power >= enemy_hp:
 		# Enemigo destruido, bola intacta
 		enemy.take_damage(enemy_hp)
+		return false
+	elif poison_active and enemy_hp > attack_power:
+		# Veneno activo: aplicamos veneno al enemigo, bola no recibe daño
+		if enemy.apply_poison():
+			poison_active = false  # Consumimos el veneno (un solo uso por power-up)
+			_deactivate_poison_aura()
+			poison_grace_timer = 0.5  # Período de gracia: evita daño por colisiones múltiples (impacto desde arriba)
+			return true
+		return true  # Enemigo ya envenenado, pero la colisión no nos daña
+	elif (poison_used_this_frame or poison_grace_timer > 0.0) and enemy_hp > attack_power:
+		# Usamos veneno (este frame o recientemente): no recibimos daño de este enemigo
+		# Solo rebotamos, el enemigo sigue vivo (evita daño por colisiones múltiples al impactar desde arriba)
+		return false
 	else:
 		# La bola pierde la diferencia (hp - attack_power)
 		var power_lost = enemy_hp - attack_power
@@ -123,6 +150,7 @@ func handle_enemy_collision(enemy: Enemy):
 		# Si attack_power llegó a 0, la bola muere
 		if attack_power <= 0:
 			die_from_combat()
+		return false
 
 func die_from_combat():
 	"""Mata la bola cuando su attack_power llega a 0"""
@@ -229,6 +257,13 @@ func _on_shield_collected(duration: float):
 	if aura and aura is ShieldAura:
 		aura.activate(duration)
 
+func _on_poison_collected():
+	"""Activa el estado poison_active al recoger el power-up (un solo uso)"""
+	poison_active = true
+	var aura = get_node_or_null("PoisonAura")
+	if aura and aura is PoisonAura:
+		aura.activate()
+
 func _on_shield_expired():
 	"""El escudo expiró por tiempo"""
 	has_shield = false
@@ -251,6 +286,12 @@ func _deactivate_shield():
 	var aura = get_node_or_null("ShieldAura")
 	if aura and aura is ShieldAura:
 		aura._deactivate()
+
+func _deactivate_poison_aura():
+	"""Desactiva el aura de veneno"""
+	var aura = get_node_or_null("PoisonAura")
+	if aura and aura is PoisonAura:
+		aura.deactivate()
 
 func update_visual(score: int, power: int):
 	"""Actualiza la apariencia visual de la bola según score (niveles)"""
