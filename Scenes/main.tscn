@@ -7,11 +7,14 @@
 [ext_resource type="Script" uid="uid://b50hg5h3v50sf" path="res://Scripts/powerupspawner.gd" id="5_kry3j"]
 [ext_resource type="PackedScene" uid="uid://ch10bav4abg2f" path="res://Scenes/PowerUp.tscn" id="6_21xkr"]
 [ext_resource type="PackedScene" uid="uid://bvbp0wgpywmay" path="res://Scenes/ShieldPowerUp.tscn" id="6b_shield"]
+[ext_resource type="PackedScene" uid="uid://c3poisonpwrup001" path="res://Scenes/PoisonPowerUp.tscn" id="6c_poison"]
 [ext_resource type="Script" uid="uid://cup7hkytgme57" path="res://Scripts/laser_spawner.gd" id="7_laser_spawner"]
 [ext_resource type="PackedScene" uid="uid://c8x7v2k3n4m5p" path="res://Scenes/Laser.tscn" id="8_laser"]
 [ext_resource type="Script" uid="uid://bd5r55ru5xrf0" path="res://Scripts/misil_spawner.gd" id="9_misil_spawner"]
 [ext_resource type="PackedScene" uid="uid://bq8xr5m2n3k4p" path="res://Scenes/Misil.tscn" id="10_misil"]
 [ext_resource type="Script" uid="uid://ce6s66sv6ysg1" path="res://Scripts/ProgressionManager.gd" id="11_progression"]
+[ext_resource type="Script" path="res://Scripts/debug_panel.gd" id="12_debug"]
+[ext_resource type="Script" path="res://Scripts/start_screen.gd" id="13_start"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bo1nx"]
 size = Vector2(50, 2000)
@@ -30,10 +33,11 @@ max_speed = 900.0
 wall_bounce = 1.5
 min_bounce_speed = 150.0
 
-[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("bola", "start_label", "enemy_spawner", "powerup_spawner", "laser_spawner", "misil_spawner", "progression_manager", "score_label", "attack_power_label")]
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("bola", "start_screen", "debug_panel", "enemy_spawner", "powerup_spawner", "laser_spawner", "misil_spawner", "progression_manager", "score_label", "attack_power_label")]
 script = ExtResource("2_bo1nx")
 bola = NodePath("../Bola")
-start_label = NodePath("../CanvasLayer/UI/StartLabel")
+start_screen = NodePath("../CanvasLayer/UI/StartScreen")
+debug_panel = NodePath("../CanvasLayer/DebugPanel")
 enemy_spawner = NodePath("../EnemySpawner")
 powerup_spawner = NodePath("../PowerUpSpawner")
 laser_spawner = NodePath("../LaserSpawner")
@@ -44,22 +48,60 @@ attack_power_label = NodePath("../CanvasLayer/UI/AttackPowerLabel")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
+[node name="DebugPanel" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -300.0
+offset_top = 20.0
+offset_right = 20.0
+offset_bottom = 300.0
+script = ExtResource("12_debug")
+powerup_scene = ExtResource("6_21xkr")
+shield_powerup_scene = ExtResource("6b_shield")
+poison_powerup_scene = ExtResource("6c_poison")
+enemy_scene = ExtResource("4_jjvhh")
+
 [node name="UI" type="Control" parent="CanvasLayer"]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="StartLabel" type="Label" parent="CanvasLayer/UI"]
-layout_mode = 0
-offset_left = 457.0
-offset_top = 295.0
-offset_right = 569.0
-offset_bottom = 318.0
-text = "Tap to Start!"
-horizontal_alignment = 1
-vertical_alignment = 1
-uppercase = true
+[node name="StartScreen" type="Control" parent="CanvasLayer/UI"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -120.0
+offset_top = -80.0
+offset_right = 120.0
+offset_bottom = 80.0
+script = ExtResource("13_start")
+
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/UI/StartScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+theme_override_constants/separation = 16
+
+[node name="PlayButton" type="Button" parent="CanvasLayer/UI/StartScreen/VBox"]
+layout_mode = 2
+text = "Play"
+
+[node name="DebugButton" type="Button" parent="CanvasLayer/UI/StartScreen/VBox"]
+layout_mode = 2
+text = "Debug mode"
 
 [node name="ScoreLabel" type="Label" parent="CanvasLayer/UI"]
 layout_mode = 0
@@ -101,7 +143,7 @@ enemy_scene = ExtResource("4_jjvhh")
 
 [node name="Timer" type="Timer" parent="EnemySpawner"]
 wait_time = 2.0
-autostart = true
+autostart = false
 
 [node name="PowerUpSpawner" type="Node2D" parent="."]
 position = Vector2(129, 3)
@@ -109,10 +151,12 @@ script = ExtResource("5_kry3j")
 powerup_scene = ExtResource("6_21xkr")
 shield_powerup_scene = ExtResource("6b_shield")
 shield_spawn_chance = 0.25
+poison_powerup_scene = ExtResource("6c_poison")
+poison_spawn_chance = 0.25
 
 [node name="Timer" type="Timer" parent="PowerUpSpawner"]
 wait_time = 10.0
-autostart = true
+autostart = false
 
 [node name="LaserSpawner" type="Node2D" parent="."]
 script = ExtResource("7_laser_spawner")

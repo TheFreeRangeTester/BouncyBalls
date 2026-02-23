@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b1ij4vahdy07n" path="res://Scripts/bola.gd" id="1_17s4t"]
 [ext_resource type="Script" path="res://Scripts/shield_aura.gd" id="2_shield_aura"]
+[ext_resource type="Script" path="res://Scripts/poison_aura.gd" id="3_poison_aura"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_1nt6f"]
 
@@ -19,6 +20,10 @@ mesh = SubResource("SphereMesh_1nt6f")
 [node name="ShieldAura" type="Node2D" parent="."]
 position = Vector2(1, 0)
 script = ExtResource("2_shield_aura")
+
+[node name="PoisonAura" type="Node2D" parent="."]
+position = Vector2(1, 0)
+script = ExtResource("3_poison_aura")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(1, 0)

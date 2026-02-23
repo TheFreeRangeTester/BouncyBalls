@@ -12,6 +12,13 @@ var max_x: float
 var is_dying := false  # Bandera para evitar múltiples llamadas a die()
 var hp_label: Label
 
+# Veneno: -1 hp por segundo durante 3 segundos, no apilable
+var is_poisoned := false
+var poison_tick_timer: Timer
+var poison_ticks_remaining := 0
+const POISON_DURATION_SECONDS := 3
+const POISON_DAMAGE_PER_TICK := 1
+
 func _ready():
 	# Buscamos el label de HP
 	hp_label = get_node_or_null("HPLabel")
@@ -86,6 +93,46 @@ func take_damage(amount: int):
 	if hp <= 0:
 		die()
 
+func apply_poison() -> bool:
+	"""Aplica veneno al enemigo. Retorna true si se aplicó, false si ya estaba envenenado (no apilable)."""
+	if is_poisoned:
+		return false
+	if is_dying:
+		return false
+	
+	is_poisoned = true
+	poison_ticks_remaining = POISON_DURATION_SECONDS
+	
+	if poison_tick_timer:
+		poison_tick_timer.stop()
+		poison_tick_timer.queue_free()
+	
+	poison_tick_timer = Timer.new()
+	poison_tick_timer.wait_time = 1.0
+	poison_tick_timer.timeout.connect(_on_poison_tick)
+	add_child(poison_tick_timer)
+	poison_tick_timer.start()
+	
+	return true
+
+func _on_poison_tick():
+	poison_ticks_remaining -= 1
+	hp = max(0, hp - POISON_DAMAGE_PER_TICK)
+	update_hp_display()
+	
+	_show_floating_damage(POISON_DAMAGE_PER_TICK)
+	
+	if hp <= 0:
+		die()
+		return
+	
+	if poison_ticks_remaining <= 0:
+		is_poisoned = false
+		if poison_tick_timer:
+			poison_tick_timer.stop()
+			poison_tick_timer.queue_free()
+			poison_tick_timer = null
+
 func die():
 	if is_dying:
 		return  # Ya está muriendo, evitamos llamadas múltiples
@@ -109,3 +156,30 @@ func update_hp_display():
 	"""Actualiza el label para mostrar el HP actual"""
 	if hp_label:
 		hp_label.text = str(hp)
+
+func _show_floating_damage(amount: int):
+	"""Muestra un número flotante de daño sobre el enemigo (-1, -2, etc.)"""
+	var container = Node2D.new()
+	var label = Label.new()
+	label.text = "-%d" % amount
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 24)
+	label.add_theme_color_override("font_color", Color(0.9, 0.2, 0.3))
+	label.add_theme_color_override("font_outline_color", Color(0.2, 0.0, 0.0))
+	label.add_theme_constant_override("outline_size", 2)
+	container.add_child(label)
+	label.position = Vector2(-25, -40)
+	label.size = Vector2(50, 35)
+	
+	var parent = get_parent()
+	if not parent:
+		return
+	parent.add_child(container)
+	container.global_position = global_position + Vector2(0, -25)
+	container.z_index = 10
+	
+	var tween = container.create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(container, "position", container.position + Vector2(0, -40), 0.7)
+	tween.tween_property(container, "modulate:a", 0.0, 0.7)
+	tween.chain().tween_callback(container.queue_free)
