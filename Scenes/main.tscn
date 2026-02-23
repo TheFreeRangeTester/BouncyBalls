@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://ue8rr4rufbfd" path="res://Scenes/Enemy.tscn" id="4_jjvhh"]
 [ext_resource type="Script" uid="uid://b50hg5h3v50sf" path="res://Scripts/powerupspawner.gd" id="5_kry3j"]
 [ext_resource type="PackedScene" uid="uid://ch10bav4abg2f" path="res://Scenes/PowerUp.tscn" id="6_21xkr"]
+[ext_resource type="PackedScene" uid="uid://bvbp0wgpywmay" path="res://Scenes/ShieldPowerUp.tscn" id="6b_shield"]
 [ext_resource type="Script" uid="uid://cup7hkytgme57" path="res://Scripts/laser_spawner.gd" id="7_laser_spawner"]
 [ext_resource type="PackedScene" uid="uid://c8x7v2k3n4m5p" path="res://Scenes/Laser.tscn" id="8_laser"]
 [ext_resource type="Script" uid="uid://bd5r55ru5xrf0" path="res://Scripts/misil_spawner.gd" id="9_misil_spawner"]
@@ -106,6 +107,8 @@ autostart = true
 position = Vector2(129, 3)
 script = ExtResource("5_kry3j")
 powerup_scene = ExtResource("6_21xkr")
+shield_powerup_scene = ExtResource("6b_shield")
+shield_spawn_chance = 0.25
 
 [node name="Timer" type="Timer" parent="PowerUpSpawner"]
 wait_time = 10.0
