@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://b43px2v1xgjy8"]
+[gd_scene load_steps=18 format=3 uid="uid://b43px2v1xgjy8"]
 
 [ext_resource type="PackedScene" uid="uid://do2px6nbfh7yf" path="res://Scenes/bola.tscn" id="1_jjgbg"]
 [ext_resource type="Script" uid="uid://cv8mxfrvtgfxw" path="res://Scripts/GameManager.gd" id="2_bo1nx"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://bvbp0wgpywmay" path="res://Scenes/ShieldPowerUp.tscn" id="6b_shield"]
 [ext_resource type="PackedScene" uid="uid://c3poisonpwrup001" path="res://Scenes/PoisonPowerUp.tscn" id="6c_poison"]
 [ext_resource type="PackedScene" path="res://Scenes/ElectricPowerUp.tscn" id="6d_electric"]
+[ext_resource type="PackedScene" path="res://Scenes/BulletTimePowerUp.tscn" id="6e_bullet_time"]
 [ext_resource type="Script" uid="uid://cup7hkytgme57" path="res://Scripts/laser_spawner.gd" id="7_laser_spawner"]
 [ext_resource type="PackedScene" uid="uid://c8x7v2k3n4m5p" path="res://Scenes/Laser.tscn" id="8_laser"]
 [ext_resource type="Script" uid="uid://bd5r55ru5xrf0" path="res://Scripts/misil_spawner.gd" id="9_misil_spawner"]
@@ -48,24 +49,6 @@ score_label = NodePath("../CanvasLayer/UI/ScoreLabel")
 attack_power_label = NodePath("../CanvasLayer/UI/AttackPowerLabel")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="DebugPanel" type="Control" parent="CanvasLayer"]
-layout_mode = 3
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.0
-anchor_right = 1.0
-anchor_bottom = 0.0
-offset_left = -300.0
-offset_top = 20.0
-offset_right = 20.0
-offset_bottom = 300.0
-script = ExtResource("12_debug")
-powerup_scene = ExtResource("6_21xkr")
-shield_powerup_scene = ExtResource("6b_shield")
-poison_powerup_scene = ExtResource("6c_poison")
-electric_powerup_scene = ExtResource("6d_electric")
-enemy_scene = ExtResource("4_jjvhh")
 
 [node name="UI" type="Control" parent="CanvasLayer"]
 layout_mode = 3
@@ -123,6 +106,25 @@ offset_bottom = 85.0
 text = "Power: 5"
 vertical_alignment = 1
 
+[node name="DebugPanel" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -300.0
+offset_top = 20.0
+offset_right = 20.0
+offset_bottom = 300.0
+script = ExtResource("12_debug")
+powerup_scene = ExtResource("6_21xkr")
+shield_powerup_scene = ExtResource("6b_shield")
+poison_powerup_scene = ExtResource("6c_poison")
+electric_powerup_scene = ExtResource("6d_electric")
+bullet_time_powerup_scene = ExtResource("6e_bullet_time")
+enemy_scene = ExtResource("4_jjvhh")
+
 [node name="Walls" type="Node2D" parent="."]
 
 [node name="LeftWall" type="StaticBody2D" parent="Walls"]
@@ -157,6 +159,8 @@ poison_powerup_scene = ExtResource("6c_poison")
 poison_spawn_chance = 0.25
 electric_powerup_scene = ExtResource("6d_electric")
 electric_spawn_chance = 0.2
+bullet_time_powerup_scene = ExtResource("6e_bullet_time")
+bullet_time_spawn_chance = 0.18
 
 [node name="Timer" type="Timer" parent="PowerUpSpawner"]
 wait_time = 10.0

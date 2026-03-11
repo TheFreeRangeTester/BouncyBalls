@@ -11,6 +11,7 @@ var min_x: float
 var max_x: float
 var is_dying := false  # Bandera para evitar múltiples llamadas a die()
 var hp_label: Label
+var time_scale := 1.0
 
 # Veneno: -1 hp por segundo durante 3 segundos, no apilable
 var is_poisoned := false
@@ -27,6 +28,7 @@ const ELECTRIC_DAMAGE_PER_SECOND := 1.0
 func _ready():
 	# Buscamos el label de HP
 	hp_label = get_node_or_null("HPLabel")
+	_sync_time_scale_from_bola()
 	
 	# Calculamos los límites basándonos en las paredes de la escena
 	calculate_limits()
@@ -72,10 +74,11 @@ func calculate_limits():
 func _physics_process(delta):
 	_update_electric_damage(delta)
 
+	var scaled_delta = delta * time_scale
 	var half_width = $CollisionShape2D.shape.extents.x * global_scale.x
 	
 	# Calculamos la próxima posición antes de mover
-	var next_x = global_position.x + speed * direction * delta
+	var next_x = global_position.x + speed * direction * scaled_delta
 	var next_left = next_x - half_width
 	var next_right = next_x + half_width
 	
@@ -144,6 +147,15 @@ func apply_electric_link(source_id: int, duration: float) -> bool:
 		"expires_at": current_time + duration
 	}
 	return true
+
+func set_time_scale(new_scale: float):
+	time_scale = max(0.01, new_scale)
+
+func _sync_time_scale_from_bola():
+	var root = get_tree().root.get_child(0)
+	var bola = root.get_node_or_null("Bola")
+	if bola and bola.has_method("get_world_time_scale"):
+		set_time_scale(bola.get_world_time_scale())
 
 func apply_poison() -> bool:
 	"""Aplica veneno al enemigo. Retorna true si se aplicó, false si ya estaba envenenado (no apilable)."""

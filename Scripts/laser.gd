@@ -19,6 +19,7 @@ var blink_timer: Timer
 var start_point: Vector2  # Punto de inicio del láser (en coordenadas globales)
 var end_point: Vector2  # Punto de fin del láser (en coordenadas globales)
 var laser_direction: Vector2  # Dirección normalizada del láser
+var time_scale := 1.0
 
 func _ready():
 	# Usamos call_deferred para asegurar que el viewport esté completamente inicializado
@@ -66,6 +67,7 @@ func _initialize_laser():
 	
 	# Iniciamos el timer de carga
 	charge_timer.start()
+	_sync_time_scale_from_bola()
 	
 	# Configuramos la línea punteada inicialmente
 	_update_line_appearance()
@@ -361,3 +363,30 @@ func resume():
 	if blink_timer:
 		blink_timer.paused = false
 	set_process(true)
+
+func set_time_scale(new_scale: float):
+	var clamped_scale = max(0.01, new_scale)
+	if is_equal_approx(time_scale, clamped_scale):
+		return
+
+	_rescale_timer(charge_timer, time_scale, clamped_scale)
+	_rescale_timer(active_timer, time_scale, clamped_scale)
+	_rescale_timer(blink_timer, time_scale, clamped_scale)
+	time_scale = clamped_scale
+
+func _sync_time_scale_from_bola():
+	var root = get_tree().root.get_child(0)
+	var bola = root.get_node_or_null("Bola")
+	if bola and bola.has_method("get_world_time_scale"):
+		set_time_scale(bola.get_world_time_scale())
+
+func _rescale_timer(timer: Timer, old_scale: float, new_scale: float):
+	if not timer or timer.is_stopped():
+		return
+
+	var was_paused = timer.paused
+	var gameplay_remaining = timer.time_left * old_scale
+	timer.stop()
+	timer.wait_time = gameplay_remaining / new_scale
+	timer.start()
+	timer.paused = was_paused
