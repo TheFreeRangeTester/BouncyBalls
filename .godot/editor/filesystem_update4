@@ -1,0 +1,5 @@
+res://Scripts/bola.gd
+res://Scripts/debug_panel.gd
+res://Scripts/powerupspawner.gd
+res://Scripts/electric_aura.gd
+res://Scripts/GameManager.gd

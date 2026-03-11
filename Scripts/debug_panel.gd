@@ -3,7 +3,7 @@ extends Control
 ## Panel de debug para probar power-ups y enemigos en escenarios controlados.
 ## Se accede desde la pantalla inicial (Debug mode). Solo spawnea bola, power-up elegido y un enemigo.
 
-enum PowerUpType { NINGUNO, BOOST, SHIELD, POISON }
+enum PowerUpType { NINGUNO, BOOST, SHIELD, POISON, ELECTRIC }
 
 @export var bola_spawn_pos := Vector2(307, 55)
 @export var powerup_spawn_pos := Vector2(400, 250)
@@ -12,6 +12,7 @@ enum PowerUpType { NINGUNO, BOOST, SHIELD, POISON }
 @export var powerup_scene: PackedScene
 @export var shield_powerup_scene: PackedScene
 @export var poison_powerup_scene: PackedScene
+@export var electric_powerup_scene: PackedScene
 @export var enemy_scene: PackedScene
 
 var _powerup_option: OptionButton
@@ -28,6 +29,8 @@ func _ready():
 		shield_powerup_scene = load("res://Scenes/ShieldPowerUp.tscn") as PackedScene
 	if not poison_powerup_scene:
 		poison_powerup_scene = load("res://Scenes/PoisonPowerUp.tscn") as PackedScene
+	if not electric_powerup_scene:
+		electric_powerup_scene = load("res://Scenes/ElectricPowerUp.tscn") as PackedScene
 	if not enemy_scene:
 		enemy_scene = load("res://Scenes/Enemy.tscn") as PackedScene
 
@@ -69,6 +72,7 @@ func _build_ui():
 	_powerup_option.add_item("Boost", PowerUpType.BOOST)
 	_powerup_option.add_item("Shield", PowerUpType.SHIELD)
 	_powerup_option.add_item("Poison", PowerUpType.POISON)
+	_powerup_option.add_item("Electric", PowerUpType.ELECTRIC)
 	_powerup_option.selected = 0
 	vbox.add_child(_powerup_option)
 	
@@ -169,6 +173,8 @@ func _spawn_debug_scenario():
 		# Veneno: activar directamente en la bola para que esté listo al chocar con el enemigo
 		if bola.has_method("_on_poison_collected"):
 			bola._on_poison_collected()
+	elif pw_type == PowerUpType.ELECTRIC and electric_powerup_scene:
+		_spawn_powerup(electric_powerup_scene, powerup_spawn_pos, bola, powerup_spawner)
 	
 	# Spawnear enemigo
 	if enemy_scene:
@@ -193,6 +199,8 @@ func _spawn_powerup(scene: PackedScene, pos: Vector2, bola: Node, powerup_spawne
 		powerup.powerup_collected.connect(bola._on_powerup_collected)
 	elif powerup.has_signal("shield_collected"):
 		powerup.shield_collected.connect(bola._on_shield_collected)
+	elif powerup.has_signal("electric_collected"):
+		powerup.electric_collected.connect(bola._on_electric_collected)
 	elif powerup.has_signal("poison_collected"):
 		powerup.poison_collected.connect(bola._on_poison_collected)
 	

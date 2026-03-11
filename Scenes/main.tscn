@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://ch10bav4abg2f" path="res://Scenes/PowerUp.tscn" id="6_21xkr"]
 [ext_resource type="PackedScene" uid="uid://bvbp0wgpywmay" path="res://Scenes/ShieldPowerUp.tscn" id="6b_shield"]
 [ext_resource type="PackedScene" uid="uid://c3poisonpwrup001" path="res://Scenes/PoisonPowerUp.tscn" id="6c_poison"]
+[ext_resource type="PackedScene" path="res://Scenes/ElectricPowerUp.tscn" id="6d_electric"]
 [ext_resource type="Script" uid="uid://cup7hkytgme57" path="res://Scripts/laser_spawner.gd" id="7_laser_spawner"]
 [ext_resource type="PackedScene" uid="uid://c8x7v2k3n4m5p" path="res://Scenes/Laser.tscn" id="8_laser"]
 [ext_resource type="Script" uid="uid://bd5r55ru5xrf0" path="res://Scripts/misil_spawner.gd" id="9_misil_spawner"]
@@ -63,13 +64,14 @@ script = ExtResource("12_debug")
 powerup_scene = ExtResource("6_21xkr")
 shield_powerup_scene = ExtResource("6b_shield")
 poison_powerup_scene = ExtResource("6c_poison")
+electric_powerup_scene = ExtResource("6d_electric")
 enemy_scene = ExtResource("4_jjvhh")
 
 [node name="UI" type="Control" parent="CanvasLayer"]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 
 [node name="StartScreen" type="Control" parent="CanvasLayer/UI"]
 layout_mode = 1
@@ -153,6 +155,8 @@ shield_powerup_scene = ExtResource("6b_shield")
 shield_spawn_chance = 0.25
 poison_powerup_scene = ExtResource("6c_poison")
 poison_spawn_chance = 0.25
+electric_powerup_scene = ExtResource("6d_electric")
+electric_spawn_chance = 0.2
 
 [node name="Timer" type="Timer" parent="PowerUpSpawner"]
 wait_time = 10.0

@@ -5,6 +5,11 @@ extends Node2D
 @export var shield_spawn_chance := 0.25  # Probabilidad 0-1 de spawear escudo (si está asignado)
 @export var poison_powerup_scene: PackedScene  # Opcional: power-up de veneno
 @export var poison_spawn_chance := 0.25  # Probabilidad 0-1 de spawear veneno
+@export var electric_powerup_scene: PackedScene  # Opcional: power-up eléctrico
+@export var electric_spawn_chance := 0.2  # Probabilidad 0-1 de spawear electricidad
+@export var boosted_special_score_threshold := 15  # Desde este score aumentan veneno y electricidad
+@export var boosted_poison_spawn_chance := 0.4
+@export var boosted_electric_spawn_chance := 0.35
 var progression_manager: Node  # Para saber cuándo los láseres están activos (escudo solo desde entonces)
 @export var spawn_interval := 10.0  # Cada 10 segundos
 @export var min_spawn_y := 50.0
@@ -116,11 +121,29 @@ func _are_high_level_enemies_enabled() -> bool:
 		return false
 	return pm.current_stage >= 1
 
+func _get_current_score() -> int:
+	var pm = progression_manager if progression_manager else get_parent().get_node_or_null("ProgressionManager")
+	if not pm or not "current_score" in pm:
+		return 0
+	return pm.current_score
+
+func _get_current_electric_spawn_chance() -> float:
+	if _get_current_score() >= boosted_special_score_threshold:
+		return boosted_electric_spawn_chance
+	return electric_spawn_chance
+
+func _get_current_poison_spawn_chance() -> float:
+	if _get_current_score() >= boosted_special_score_threshold:
+		return boosted_poison_spawn_chance
+	return poison_spawn_chance
+
 func spawn_powerup():
 	var scene_to_spawn: PackedScene
 	if shield_powerup_scene and _are_lasers_enabled() and randf() < shield_spawn_chance:
 		scene_to_spawn = shield_powerup_scene
-	elif poison_powerup_scene and _are_high_level_enemies_enabled() and randf() < poison_spawn_chance:
+	elif electric_powerup_scene and _are_high_level_enemies_enabled() and randf() < _get_current_electric_spawn_chance():
+		scene_to_spawn = electric_powerup_scene
+	elif poison_powerup_scene and _are_high_level_enemies_enabled() and randf() < _get_current_poison_spawn_chance():
 		scene_to_spawn = poison_powerup_scene
 	else:
 		scene_to_spawn = powerup_scene
@@ -157,6 +180,8 @@ func spawn_powerup():
 			powerup.powerup_collected.connect(bola._on_powerup_collected)
 		elif powerup.has_signal("shield_collected"):
 			powerup.shield_collected.connect(bola._on_shield_collected)
+		elif powerup.has_signal("electric_collected"):
+			powerup.electric_collected.connect(bola._on_electric_collected)
 		elif powerup.has_signal("poison_collected"):
 			powerup.poison_collected.connect(bola._on_poison_collected)
 	
