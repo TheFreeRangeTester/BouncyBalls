@@ -22,6 +22,12 @@ var has_shield := false
 var shield_timer: Timer
 var poison_active := false  # Estado de un solo uso: al chocar con enemigo más fuerte, aplica veneno sin recibir daño
 var poison_grace_timer := 0.0  # Tras aplicar veneno, breve inmunidad para evitar daño por colisiones múltiples (ej. impacto desde arriba)
+var electric_active := false
+var electric_timer: Timer
+
+const ELECTRIC_DURATION := 5.0
+const ELECTRIC_LINK_RADIUS := 180.0
+const ELECTRIC_REAPPLY_WINDOW := 1.1
 
 func _physics_process(delta):
 	poison_grace_timer = max(0.0, poison_grace_timer - delta)
@@ -48,6 +54,9 @@ func _physics_process(delta):
 
 	# Rebote manual contra paredes
 	handle_wall_bounce_manual()
+
+	if electric_active:
+		_apply_electric_links()
 
 	# Señal si cae fuera de la pantalla
 	if global_position.y > reset_y and not has_fallen:
@@ -106,6 +115,9 @@ func resume_ball():
 	poison_active = false
 	poison_grace_timer = 0.0
 	_deactivate_poison_aura()
+	
+	# Desactivamos la electricidad si estaba activa
+	_deactivate_electric()
 
 func handle_enemy_collision(enemy: Enemy, poison_used_this_frame: bool = false) -> bool:
 	"""
@@ -291,6 +303,67 @@ func _deactivate_poison_aura():
 	"""Desactiva el aura de veneno"""
 	var aura = get_node_or_null("PoisonAura")
 	if aura and aura is PoisonAura:
+		aura.deactivate()
+
+func _apply_electric_links():
+	var remaining_duration = ELECTRIC_DURATION
+	if electric_timer:
+		remaining_duration = max(0.1, electric_timer.time_left)
+
+	var nearby_enemies = _get_enemies_in_electric_radius()
+	for enemy in nearby_enemies:
+		enemy.apply_electric_link(get_instance_id(), min(remaining_duration, ELECTRIC_REAPPLY_WINDOW))
+
+	var aura = get_node_or_null("ElectricAura")
+	if aura and aura is ElectricAura:
+		aura.update_links(nearby_enemies)
+
+func _get_enemies_in_electric_radius() -> Array[Enemy]:
+	var nearby_enemies: Array[Enemy] = []
+	for enemy in get_tree().get_nodes_in_group("enemies"):
+		if not is_instance_valid(enemy):
+			continue
+		if not (enemy is Enemy):
+			continue
+		if enemy.is_dying:
+			continue
+		if global_position.distance_to(enemy.global_position) > ELECTRIC_LINK_RADIUS:
+			continue
+
+		nearby_enemies.append(enemy)
+
+	return nearby_enemies
+
+func _on_electric_collected():
+	electric_active = true
+
+	if electric_timer:
+		electric_timer.stop()
+		electric_timer.queue_free()
+
+	electric_timer = Timer.new()
+	electric_timer.wait_time = ELECTRIC_DURATION
+	electric_timer.one_shot = true
+	electric_timer.timeout.connect(_on_electric_expired)
+	add_child(electric_timer)
+	electric_timer.start()
+
+	var aura = get_node_or_null("ElectricAura")
+	if aura and aura is ElectricAura:
+		aura.activate(ELECTRIC_DURATION, ELECTRIC_LINK_RADIUS)
+
+func _on_electric_expired():
+	_deactivate_electric()
+
+func _deactivate_electric():
+	electric_active = false
+	if electric_timer:
+		electric_timer.stop()
+		electric_timer.queue_free()
+		electric_timer = null
+
+	var aura = get_node_or_null("ElectricAura")
+	if aura and aura is ElectricAura:
 		aura.deactivate()
 
 func update_visual(score: int, power: int):

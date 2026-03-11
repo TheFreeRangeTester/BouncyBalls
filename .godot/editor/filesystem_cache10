@@ -1,5 +1,5 @@
 63f7b34db8d8cdea90c76aacccf841ec
-::res://::1772422949
+::res://::1773194673
 icon.svg::CompressedTexture2D::4275672479386034385::1768361989::1768362014::1::::<><><>0<>0<>f48a5986b8ebb66b3bad6a92f0bf4dff<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
 ::res://Assets/::1768362086
 ::res://docs/::1771808565
@@ -16,7 +16,7 @@ ShieldPowerUp.tscn::PackedScene::3863407343081971928::1771808556::0::1::::<><><>
 ::res://Scripts/::1771811473
 bola.gd::GDScript::4228444984585944705::1771811461::0::1::::<>CharacterBody2D<><>0<>0<><>::
 debug_panel.gd::GDScript::1249640265387088869::1771811461::0::1::::<>Control<><>0<>0<><>::
-enemy.gd::GDScript::6963839834968542593::1771811461::0::1::::Enemy<>StaticBody2D<><>0<>0<><>::
+enemy.gd::GDScript::6963839834968542593::1773194692::0::1::::Enemy<>StaticBody2D<><>0<>0<><>::
 enemy_spawner.gd::GDScript::3572797637959821687::1771811461::0::1::::<>Node2D<><>0<>0<><>::
 GameManager.gd::GDScript::6315701516700067448::1771811461::0::1::::<>Node<><>0<>0<><>::
 laser.gd::GDScript::6263804883295801188::1769539806::0::1::::Laser<>Area2D<><>0<>0<><>::

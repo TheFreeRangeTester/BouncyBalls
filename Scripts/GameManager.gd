@@ -40,10 +40,7 @@ func _ready():
 		debug_panel.visible = false
 	
 	# Conectar botones de la pantalla inicial
-	if start_screen and start_screen.has_signal("play_pressed"):
-		start_screen.play_pressed.connect(_on_play_pressed)
-	if start_screen and start_screen.has_signal("debug_mode_pressed"):
-		start_screen.debug_mode_pressed.connect(_on_debug_mode_pressed)
+	_connect_start_screen_controls()
 	
 	# Pausar spawners hasta que empiece el juego
 	if enemy_spawner:
@@ -60,6 +57,23 @@ func _ready():
 	
 	# Conectamos la señal de enemigos destruidos
 	connect_enemy_signals()
+
+func _connect_start_screen_controls():
+	if not start_screen:
+		return
+
+	if start_screen.has_signal("play_pressed") and not start_screen.play_pressed.is_connected(_on_play_pressed):
+		start_screen.play_pressed.connect(_on_play_pressed)
+	if start_screen.has_signal("debug_mode_pressed") and not start_screen.debug_mode_pressed.is_connected(_on_debug_mode_pressed):
+		start_screen.debug_mode_pressed.connect(_on_debug_mode_pressed)
+
+	var play_button = start_screen.get_node_or_null("VBox/PlayButton")
+	if play_button and not play_button.pressed.is_connected(_on_play_pressed):
+		play_button.pressed.connect(_on_play_pressed)
+
+	var debug_button = start_screen.get_node_or_null("VBox/DebugButton")
+	if debug_button and not debug_button.pressed.is_connected(_on_debug_mode_pressed):
+		debug_button.pressed.connect(_on_debug_mode_pressed)
 
 func _on_ball_fell():
 	state = GameState.WAITING_TO_START

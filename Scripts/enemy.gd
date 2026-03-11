@@ -19,6 +19,11 @@ var poison_ticks_remaining := 0
 const POISON_DURATION_SECONDS := 3
 const POISON_DAMAGE_PER_TICK := 1
 
+# Electricidad: -1 hp por segundo mientras la bola electrificada esté cerca.
+var electrified_sources: Dictionary = {}
+var electric_tick_accumulator := 0.0
+const ELECTRIC_DAMAGE_PER_SECOND := 1.0
+
 func _ready():
 	# Buscamos el label de HP
 	hp_label = get_node_or_null("HPLabel")
@@ -65,6 +70,8 @@ func calculate_limits():
 	max_x = viewport.size.x - 50
 
 func _physics_process(delta):
+	_update_electric_damage(delta)
+
 	var half_width = $CollisionShape2D.shape.extents.x * global_scale.x
 	
 	# Calculamos la próxima posición antes de mover
@@ -92,6 +99,51 @@ func take_damage(amount: int):
 	hp -= amount
 	if hp <= 0:
 		die()
+
+func _update_electric_damage(delta: float):
+	if is_dying:
+		return
+
+	if electrified_sources.is_empty():
+		electric_tick_accumulator = 0.0
+		return
+
+	var current_time = Time.get_ticks_msec() / 1000.0
+	var active_sources := 0
+	for source_id in electrified_sources.keys():
+		var source_data = electrified_sources[source_id]
+		if current_time <= source_data["expires_at"]:
+			active_sources += 1
+
+	if active_sources <= 0:
+		electrified_sources.clear()
+		electric_tick_accumulator = 0.0
+		return
+
+	electric_tick_accumulator += delta
+	if electric_tick_accumulator < 1.0:
+		return
+
+	var damage_instances = int(floor(electric_tick_accumulator))
+	electric_tick_accumulator -= damage_instances
+	var total_damage = max(1, int(round(ELECTRIC_DAMAGE_PER_SECOND * damage_instances)))
+	hp = max(0, hp - total_damage)
+	update_hp_display()
+	_show_floating_damage(total_damage)
+
+	if hp <= 0:
+		die()
+
+func apply_electric_link(source_id: int, duration: float) -> bool:
+	"""Registra o renueva un enlace eléctrico sobre este enemigo."""
+	if is_dying:
+		return false
+
+	var current_time = Time.get_ticks_msec() / 1000.0
+	electrified_sources[source_id] = {
+		"expires_at": current_time + duration
+	}
+	return true
 
 func apply_poison() -> bool:
 	"""Aplica veneno al enemigo. Retorna true si se aplicó, false si ya estaba envenenado (no apilable)."""
@@ -136,8 +188,10 @@ func _on_poison_tick():
 func die():
 	if is_dying:
 		return  # Ya está muriendo, evitamos llamadas múltiples
-	
+
 	is_dying = true
+	electrified_sources.clear()
+	electric_tick_accumulator = 0.0
 	emit_signal("enemy_destroyed")
 	queue_free()
 
