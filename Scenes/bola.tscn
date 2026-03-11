@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://do2px6nbfh7yf"]
+[gd_scene load_steps=7 format=3 uid="uid://do2px6nbfh7yf"]
 
 [ext_resource type="Script" uid="uid://b1ij4vahdy07n" path="res://Scripts/bola.gd" id="1_17s4t"]
 [ext_resource type="Script" path="res://Scripts/shield_aura.gd" id="2_shield_aura"]
 [ext_resource type="Script" path="res://Scripts/poison_aura.gd" id="3_poison_aura"]
 [ext_resource type="Script" path="res://Scripts/electric_aura.gd" id="4_electric_aura"]
+[ext_resource type="Script" path="res://Scripts/bullet_time_aura.gd" id="5_bullet_time_aura"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_1nt6f"]
 
@@ -29,6 +30,10 @@ script = ExtResource("3_poison_aura")
 [node name="ElectricAura" type="Node2D" parent="."]
 position = Vector2(1, 0)
 script = ExtResource("4_electric_aura")
+
+[node name="BulletTimeAura" type="Node2D" parent="."]
+position = Vector2(1, 0)
+script = ExtResource("5_bullet_time_aura")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(1, 0)

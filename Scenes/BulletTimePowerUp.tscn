@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/bullet_time_powerup.gd" id="1_bullet_time"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bullet_time"]
+size = Vector2(26, 26)
+
+[node name="BulletTimePowerUp" type="Area2D"]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_bullet_time")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_bullet_time")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+position = Vector2(-15, -15)
+color = Color(0.78, 0.96, 1, 1)
+polygon = PackedVector2Array(15, 2, 24, 6, 28, 15, 24, 24, 15, 28, 6, 24, 2, 15, 6, 6)

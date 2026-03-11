@@ -24,10 +24,15 @@ var poison_active := false  # Estado de un solo uso: al chocar con enemigo más 
 var poison_grace_timer := 0.0  # Tras aplicar veneno, breve inmunidad para evitar daño por colisiones múltiples (ej. impacto desde arriba)
 var electric_active := false
 var electric_timer: Timer
+var bullet_time_active := false
+var bullet_time_timer: Timer
+var world_time_scale := 1.0
 
 const ELECTRIC_DURATION := 5.0
 const ELECTRIC_LINK_RADIUS := 180.0
 const ELECTRIC_REAPPLY_WINDOW := 1.1
+const BULLET_TIME_DURATION := 10.0
+const BULLET_TIME_SCALE := 0.45
 
 func _physics_process(delta):
 	poison_grace_timer = max(0.0, poison_grace_timer - delta)
@@ -57,6 +62,9 @@ func _physics_process(delta):
 
 	if electric_active:
 		_apply_electric_links()
+
+	if bullet_time_active:
+		_apply_world_time_scale()
 
 	# Señal si cae fuera de la pantalla
 	if global_position.y > reset_y and not has_fallen:
@@ -118,6 +126,7 @@ func resume_ball():
 	
 	# Desactivamos la electricidad si estaba activa
 	_deactivate_electric()
+	_deactivate_bullet_time()
 
 func handle_enemy_collision(enemy: Enemy, poison_used_this_frame: bool = false) -> bool:
 	"""
@@ -365,6 +374,58 @@ func _deactivate_electric():
 	var aura = get_node_or_null("ElectricAura")
 	if aura and aura is ElectricAura:
 		aura.deactivate()
+
+func _on_bullet_time_collected(duration: float = BULLET_TIME_DURATION):
+	bullet_time_active = true
+
+	if bullet_time_timer:
+		bullet_time_timer.stop()
+		bullet_time_timer.queue_free()
+
+	bullet_time_timer = Timer.new()
+	bullet_time_timer.wait_time = duration
+	bullet_time_timer.one_shot = true
+	bullet_time_timer.timeout.connect(_on_bullet_time_expired)
+	add_child(bullet_time_timer)
+	bullet_time_timer.start()
+
+	_set_world_time_scale(BULLET_TIME_SCALE)
+
+	var aura = get_node_or_null("BulletTimeAura")
+	if aura and aura is BulletTimeAura:
+		aura.activate(duration)
+
+func _on_bullet_time_expired():
+	_deactivate_bullet_time()
+
+func _deactivate_bullet_time():
+	bullet_time_active = false
+	if bullet_time_timer:
+		bullet_time_timer.stop()
+		bullet_time_timer.queue_free()
+		bullet_time_timer = null
+
+	_set_world_time_scale(1.0)
+
+	var aura = get_node_or_null("BulletTimeAura")
+	if aura and aura is BulletTimeAura:
+		aura.deactivate()
+
+func _set_world_time_scale(new_scale: float):
+	if is_equal_approx(world_time_scale, new_scale):
+		return
+
+	world_time_scale = new_scale
+	_apply_world_time_scale()
+
+func _apply_world_time_scale():
+	for group_name in ["enemies", "lasers", "misiles"]:
+		for node in get_tree().get_nodes_in_group(group_name):
+			if is_instance_valid(node) and node.has_method("set_time_scale"):
+				node.set_time_scale(world_time_scale)
+
+func get_world_time_scale() -> float:
+	return world_time_scale
 
 func update_visual(score: int, power: int):
 	"""Actualiza la apariencia visual de la bola según score (niveles)"""
