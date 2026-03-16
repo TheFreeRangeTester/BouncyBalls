@@ -59,6 +59,7 @@ func _physics_process(delta):
 
 	# Rebote manual contra paredes
 	handle_wall_bounce_manual()
+	handle_ceiling_bounce_manual()
 
 	if electric_active:
 		_apply_electric_links()
@@ -78,6 +79,14 @@ func handle_wall_bounce_manual():
 			velocity.x = min_bounce_speed * (1 if velocity.x >= 0 else -1)
 
 		velocity.x = -velocity.x * wall_bounce
+
+func handle_ceiling_bounce_manual():
+	if is_on_ceiling():
+		# Aseguramos una velocidad mínima vertical al rebotar hacia abajo
+		if abs(velocity.y) < min_bounce_speed:
+			velocity.y = min_bounce_speed
+
+		velocity.y = abs(velocity.y) * wall_bounce
 
 func _input(event):
 	if (event is InputEventScreenTouch and event.pressed) \

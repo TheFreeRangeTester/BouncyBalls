@@ -1,12 +1,1 @@
 res://Scripts/bola.gd
-res://Scripts/debug_panel.gd
-res://Scripts/powerupspawner.gd
-res://Scripts/electric_aura.gd
-res://Scripts/GameManager.gd
-res://Scenes/ElectricPowerUp.tscn
-res://Scripts/electric_powerup.gd
-res://Scripts/enemy.gd
-res://Scripts/laser.gd
-res://Scripts/misil.gd
-res://Scripts/bullet_time_aura.gd
-res://Scripts/bullet_time_powerup.gd

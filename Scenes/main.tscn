@@ -1,28 +1,31 @@
-[gd_scene load_steps=18 format=3 uid="uid://b43px2v1xgjy8"]
+[gd_scene load_steps=21 format=3 uid="uid://b43px2v1xgjy8"]
 
 [ext_resource type="PackedScene" uid="uid://do2px6nbfh7yf" path="res://Scenes/bola.tscn" id="1_jjgbg"]
 [ext_resource type="Script" uid="uid://cv8mxfrvtgfxw" path="res://Scripts/GameManager.gd" id="2_bo1nx"]
 [ext_resource type="Script" uid="uid://bq5xpqdpdqtkh" path="res://Scripts/enemy_spawner.gd" id="3_8gbba"]
 [ext_resource type="PackedScene" uid="uid://ue8rr4rufbfd" path="res://Scenes/Enemy.tscn" id="4_jjvhh"]
 [ext_resource type="Script" uid="uid://b50hg5h3v50sf" path="res://Scripts/powerupspawner.gd" id="5_kry3j"]
-[ext_resource type="PackedScene" uid="uid://ch10bav4abg2f" path="res://Scenes/PowerUp.tscn" id="6_21xkr"]
 [ext_resource type="PackedScene" uid="uid://bvbp0wgpywmay" path="res://Scenes/ShieldPowerUp.tscn" id="6b_shield"]
-[ext_resource type="PackedScene" uid="uid://c3poisonpwrup001" path="res://Scenes/PoisonPowerUp.tscn" id="6c_poison"]
+[ext_resource type="PackedScene" uid="uid://uunrbokr3jn1" path="res://Scenes/PoisonPowerUp.tscn" id="6c_poison"]
 [ext_resource type="PackedScene" path="res://Scenes/ElectricPowerUp.tscn" id="6d_electric"]
 [ext_resource type="PackedScene" path="res://Scenes/BulletTimePowerUp.tscn" id="6e_bullet_time"]
+[ext_resource type="PackedScene" uid="uid://ch10bav4abg2f" path="res://Scenes/PowerUp.tscn" id="6_21xkr"]
 [ext_resource type="Script" uid="uid://cup7hkytgme57" path="res://Scripts/laser_spawner.gd" id="7_laser_spawner"]
 [ext_resource type="PackedScene" uid="uid://c8x7v2k3n4m5p" path="res://Scenes/Laser.tscn" id="8_laser"]
 [ext_resource type="Script" uid="uid://bd5r55ru5xrf0" path="res://Scripts/misil_spawner.gd" id="9_misil_spawner"]
 [ext_resource type="PackedScene" uid="uid://bq8xr5m2n3k4p" path="res://Scenes/Misil.tscn" id="10_misil"]
 [ext_resource type="Script" uid="uid://ce6s66sv6ysg1" path="res://Scripts/ProgressionManager.gd" id="11_progression"]
-[ext_resource type="Script" path="res://Scripts/debug_panel.gd" id="12_debug"]
-[ext_resource type="Script" path="res://Scripts/start_screen.gd" id="13_start"]
+[ext_resource type="Script" uid="uid://r2lnl3uox30l" path="res://Scripts/debug_panel.gd" id="12_debug"]
+[ext_resource type="Script" uid="uid://dg0mdd677102j" path="res://Scripts/start_screen.gd" id="13_start"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bo1nx"]
 size = Vector2(50, 2000)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8gbba"]
 size = Vector2(50, 2000)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_topwall"]
+size = Vector2(2000, 50)
 
 [node name="Main" type="Node2D"]
 
@@ -55,6 +58,8 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="StartScreen" type="Control" parent="CanvasLayer/UI"]
 layout_mode = 1
@@ -67,6 +72,8 @@ offset_left = -120.0
 offset_top = -80.0
 offset_right = 120.0
 offset_bottom = 80.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("13_start")
 
 [node name="VBox" type="VBoxContainer" parent="CanvasLayer/UI/StartScreen"]
@@ -78,6 +85,8 @@ offset_left = 20.0
 offset_top = 20.0
 offset_right = -20.0
 offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/separation = 16
 
 [node name="PlayButton" type="Button" parent="CanvasLayer/UI/StartScreen/VBox"]
@@ -108,15 +117,15 @@ vertical_alignment = 1
 
 [node name="DebugPanel" type="Control" parent="CanvasLayer"]
 layout_mode = 3
-anchors_preset = 6
+anchors_preset = 1
 anchor_left = 1.0
-anchor_top = 0.0
 anchor_right = 1.0
-anchor_bottom = 0.0
 offset_left = -300.0
 offset_top = 20.0
 offset_right = 20.0
 offset_bottom = 300.0
+grow_horizontal = 0
+grow_vertical = 2
 script = ExtResource("12_debug")
 powerup_scene = ExtResource("6_21xkr")
 shield_powerup_scene = ExtResource("6b_shield")
@@ -140,6 +149,12 @@ position = Vector2(1154, -3)
 position = Vector2(0, -3)
 shape = SubResource("RectangleShape2D_8gbba")
 
+[node name="TopWall" type="StaticBody2D" parent="Walls"]
+position = Vector2(576, -25)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/TopWall"]
+shape = SubResource("RectangleShape2D_topwall")
+
 [node name="EnemySpawner" type="Node2D" parent="."]
 position = Vector2(1071, 288)
 script = ExtResource("3_8gbba")
@@ -147,24 +162,18 @@ enemy_scene = ExtResource("4_jjvhh")
 
 [node name="Timer" type="Timer" parent="EnemySpawner"]
 wait_time = 2.0
-autostart = false
 
 [node name="PowerUpSpawner" type="Node2D" parent="."]
 position = Vector2(129, 3)
 script = ExtResource("5_kry3j")
 powerup_scene = ExtResource("6_21xkr")
 shield_powerup_scene = ExtResource("6b_shield")
-shield_spawn_chance = 0.25
 poison_powerup_scene = ExtResource("6c_poison")
-poison_spawn_chance = 0.25
 electric_powerup_scene = ExtResource("6d_electric")
-electric_spawn_chance = 0.2
 bullet_time_powerup_scene = ExtResource("6e_bullet_time")
-bullet_time_spawn_chance = 0.18
 
 [node name="Timer" type="Timer" parent="PowerUpSpawner"]
 wait_time = 10.0
-autostart = false
 
 [node name="LaserSpawner" type="Node2D" parent="."]
 script = ExtResource("7_laser_spawner")
