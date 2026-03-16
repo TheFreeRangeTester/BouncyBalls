@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://b43px2v1xgjy8"]
+[gd_scene load_steps=23 format=3 uid="uid://b43px2v1xgjy8"]
 
 [ext_resource type="PackedScene" uid="uid://do2px6nbfh7yf" path="res://Scenes/bola.tscn" id="1_jjgbg"]
 [ext_resource type="Script" uid="uid://cv8mxfrvtgfxw" path="res://Scripts/GameManager.gd" id="2_bo1nx"]
@@ -17,6 +17,8 @@
 [ext_resource type="Script" uid="uid://ce6s66sv6ysg1" path="res://Scripts/ProgressionManager.gd" id="11_progression"]
 [ext_resource type="Script" uid="uid://r2lnl3uox30l" path="res://Scripts/debug_panel.gd" id="12_debug"]
 [ext_resource type="Script" uid="uid://dg0mdd677102j" path="res://Scripts/start_screen.gd" id="13_start"]
+[ext_resource type="Script" path="res://Scripts/bottom_spikes.gd" id="14_bottom_spikes"]
+[ext_resource type="Script" path="res://Scripts/vfx_manager.gd" id="15_vfx_manager"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bo1nx"]
 size = Vector2(50, 2000)
@@ -35,8 +37,12 @@ upward_force = 750.0
 side_force = 600.0
 gravity = 1200.0
 max_speed = 900.0
+reset_y = 650
 wall_bounce = 1.5
 min_bounce_speed = 150.0
+
+[node name="VFXManager" type="Node2D" parent="."]
+script = ExtResource("15_vfx_manager")
 
 [node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("bola", "start_screen", "debug_panel", "enemy_spawner", "powerup_spawner", "laser_spawner", "misil_spawner", "progression_manager", "score_label", "attack_power_label")]
 script = ExtResource("2_bo1nx")
@@ -154,6 +160,24 @@ position = Vector2(576, -25)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/TopWall"]
 shape = SubResource("RectangleShape2D_topwall")
+
+[node name="BottomSpikes" type="Area2D" parent="."]
+position = Vector2(16, 630)
+collision_mask = 1
+monitoring = true
+monitorable = false
+script = ExtResource("14_bottom_spikes")
+
+[node name="LavaSurface" type="Polygon2D" parent="BottomSpikes"]
+color = Color(0.95, 0.28, 0.08, 0.96)
+polygon = PackedVector2Array(0, -6, 1120, -6, 1120, 26, 0, 26)
+
+[node name="LavaGlow" type="Polygon2D" parent="BottomSpikes"]
+color = Color(1, 0.75, 0.28, 0.4)
+polygon = PackedVector2Array(0, -9, 1120, -9, 1120, 6, 0, 6)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="BottomSpikes"]
+polygon = PackedVector2Array(0, -8, 1120, -8, 1120, 24, 0, 24)
 
 [node name="EnemySpawner" type="Node2D" parent="."]
 position = Vector2(1071, 288)

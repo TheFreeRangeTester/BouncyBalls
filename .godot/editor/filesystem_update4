@@ -1,1 +1,5 @@
 res://Scripts/bola.gd
+res://Scripts/bottom_spikes.gd
+res://Scripts/enemy.gd
+res://Scripts/misil_spawner.gd
+res://Scripts/vfx_manager.gd

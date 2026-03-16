@@ -159,6 +159,7 @@ func handle_enemy_collision(enemy: Enemy, poison_used_this_frame: bool = false) 
 	elif poison_active and enemy_hp > attack_power:
 		# Veneno activo: aplicamos veneno al enemigo, bola no recibe daño
 		if enemy.apply_poison():
+			_emit_vfx(&"poison_hit", enemy.global_position)
 			poison_active = false  # Consumimos el veneno (un solo uso por power-up)
 			_deactivate_poison_aura()
 			poison_grace_timer = 0.5  # Período de gracia: evita daño por colisiones múltiples (impacto desde arriba)
@@ -172,6 +173,7 @@ func handle_enemy_collision(enemy: Enemy, poison_used_this_frame: bool = false) 
 		# La bola pierde la diferencia (hp - attack_power)
 		var power_lost = enemy_hp - attack_power
 		attack_power = max(0, attack_power - power_lost)
+		_emit_vfx(&"ball_hurt", global_position)
 		emit_signal("attack_power_changed", attack_power)
 		
 		# Destruimos el enemigo también (aunque la bola pierde poder)
@@ -233,6 +235,7 @@ func _on_laser_hit(power_loss: int):
 	
 	# Reducimos el poder de la bola
 	attack_power = max(0, attack_power - power_loss)
+	_emit_vfx(&"ball_hurt", global_position)
 	emit_signal("attack_power_changed", attack_power)
 	
 	# Si el poder llega a 0, la bola muere
@@ -250,6 +253,7 @@ func _on_misil_hit(power_loss: int):
 	
 	# Reducimos el poder de la bola
 	attack_power = max(0, attack_power - power_loss)
+	_emit_vfx(&"ball_hurt", global_position)
 	emit_signal("attack_power_changed", attack_power)
 	
 	# Si el poder llega a 0, la bola muere
@@ -259,6 +263,7 @@ func _on_misil_hit(power_loss: int):
 func _absorb_hit_with_shield():
 	"""El escudo absorbe el impacto y desaparece"""
 	has_shield = false
+	_emit_vfx(&"shield_block", global_position)
 	if shield_timer:
 		shield_timer.stop()
 		shield_timer.queue_free()
@@ -435,6 +440,14 @@ func _apply_world_time_scale():
 
 func get_world_time_scale() -> float:
 	return world_time_scale
+
+func _emit_vfx(effect_id: StringName, pos: Vector2):
+	var root = get_tree().current_scene
+	if not root:
+		return
+	var vfx_manager = root.get_node_or_null("VFXManager")
+	if vfx_manager and vfx_manager.has_method("emit_effect"):
+		vfx_manager.emit_effect(effect_id, pos)
 
 func update_visual(score: int, power: int):
 	"""Actualiza la apariencia visual de la bola según score (niveles)"""

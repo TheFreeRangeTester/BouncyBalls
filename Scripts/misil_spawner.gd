@@ -49,6 +49,8 @@ func spawn_misil():
 	# Creamos el misil
 	var misil = misil_scene.instantiate()
 	misil.global_position = Vector2(spawn_x, spawn_y)
+
+	_emit_vfx(&"lava_splash", misil.global_position + Vector2(0, 6))
 	
 	# Agregamos al grupo
 	misil.add_to_group("misiles")
@@ -59,6 +61,14 @@ func spawn_misil():
 	
 	get_parent().add_child(misil)
 	print("Misil spawneado en posición: ", misil.global_position)
+
+func _emit_vfx(effect_id: StringName, pos: Vector2):
+	var root = get_tree().current_scene
+	if not root:
+		return
+	var vfx_manager = root.get_node_or_null("VFXManager")
+	if vfx_manager and vfx_manager.has_method("emit_effect"):
+		vfx_manager.emit_effect(effect_id, pos)
 
 func pause_spawning():
 	if timer:

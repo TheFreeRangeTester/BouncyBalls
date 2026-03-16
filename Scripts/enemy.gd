@@ -204,6 +204,7 @@ func die():
 	is_dying = true
 	electrified_sources.clear()
 	electric_tick_accumulator = 0.0
+	_emit_vfx(&"enemy_kill", global_position)
 	emit_signal("enemy_destroyed")
 	queue_free()
 
@@ -249,3 +250,11 @@ func _show_floating_damage(amount: int):
 	tween.tween_property(container, "position", container.position + Vector2(0, -40), 0.7)
 	tween.tween_property(container, "modulate:a", 0.0, 0.7)
 	tween.chain().tween_callback(container.queue_free)
+
+func _emit_vfx(effect_id: StringName, pos: Vector2):
+	var root = get_tree().current_scene
+	if not root:
+		return
+	var vfx_manager = root.get_node_or_null("VFXManager")
+	if vfx_manager and vfx_manager.has_method("emit_effect"):
+		vfx_manager.emit_effect(effect_id, pos)
