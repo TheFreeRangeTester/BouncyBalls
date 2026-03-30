@@ -7,6 +7,7 @@ signal misil_hit(power_loss: int)
 @export var speed: float = 150.0  # Velocidad de seguimiento
 @export var lifetime := 8.0  # Tiempo de vida en segundos (luego explota)
 @export var power_loss := 2  # Cantidad de poder que reduce cuando golpea a la bola
+@export var visual_angle_offset := 0.0  # Ajuste fino por si el sprite no apunta exactamente al objetivo
 
 var target: Node2D  # La bola que seguirá
 var lifetime_timer: Timer
@@ -50,7 +51,7 @@ func _physics_process(delta):
 	
 	# Rotamos el misil para que apunte hacia la dirección de movimiento
 	if direction.length() > 0.01:
-		rotation = direction.angle() + PI / 2  # Ajustamos para que apunte hacia arriba
+		rotation = direction.angle() + visual_angle_offset
 
 func _on_body_entered(body: Node2D):
 	# Solo reaccionamos si es la bola del jugador

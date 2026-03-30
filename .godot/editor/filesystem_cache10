@@ -1,34 +1,51 @@
 63f7b34db8d8cdea90c76aacccf841ec
-::res://::1773623928
+::res://::1774838126
 icon.svg::CompressedTexture2D::4275672479386034385::1768361989::1768362014::1::::<><><>0<>0<>f48a5986b8ebb66b3bad6a92f0bf4dff<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
-::res://Assets/::1768362086
+::res://Assets/::1774838099
+::res://Assets/ball/::1774833298
+::res://Assets/ball/orb/::1774833298
+frame 1.png::CompressedTexture2D::7188049236652070779::1774833224::1774833289::1::::<><><>0<>0<>276c1e7c60e598471ae550e626ef93ac<>res://.godot/imported/frame 1.png-5d0dc5229bfd760469a74fad801aee34.ctex::
+frame 2.png::CompressedTexture2D::3989137260072257763::1774833224::1774833289::1::::<><><>0<>0<>02b61ad38919dfcb7b4849517abe817f<>res://.godot/imported/frame 2.png-84f8839322728e9385d78bcb229cb85d.ctex::
+frame 3.png::CompressedTexture2D::609286359363924445::1774833224::1774833289::1::::<><><>0<>0<>6188e13028b2caa83b1fe5f31f7e5abf<>res://.godot/imported/frame 3.png-942f0afcff1e6c7468a9f70449438ac8.ctex::
+frame 4.png::CompressedTexture2D::6334686006893771553::1774833224::1774833289::1::::<><><>0<>0<>4ab073ed0dabdcdb46943e18e795cc04<>res://.godot/imported/frame 4.png-fbb372fc4625aa60e58a84374acb7c78.ctex::
+frame 5.png::CompressedTexture2D::5695557866548727674::1774833224::1774833289::1::::<><><>0<>0<>3abc64c14c4aee7de15cbfca21ecdb54<>res://.godot/imported/frame 5.png-53e1495f5864530ef33c33dc90daacea.ctex::
+frame 6.png::CompressedTexture2D::569873921384889655::1774833224::1774833289::1::::<><><>0<>0<>4440eb1349b66f61ed808ff757aec936<>res://.godot/imported/frame 6.png-3271e6541b8b579500128ccd4eabbdc0.ctex::
+::res://Assets/enemy/::1774838099
+::res://Assets/enemy/fly/::1774838099
+fly1.png::CompressedTexture2D::7904928025758787060::1774838094::1774838145::1::::<><><>0<>0<>ed89db33025d1129434a6fed37d91774<>res://.godot/imported/fly1.png-1a4e6b01e4e2f50a20c8adb4ef3f3cfb.ctex::
+fly2.png::CompressedTexture2D::6997048773634657619::1774838094::1774838145::1::::<><><>0<>0<>b47a5b64242ee8a6973d7762293018e5<>res://.godot/imported/fly2.png-06a5b87e6e1b051f63a2b752a579e889.ctex::
+::res://Assets/misil/::1774833743
+::res://Assets/misil/rocket/::1774833743
+frame1.png::CompressedTexture2D::6027324606181424833::1774833725::1774833737::1::::<><><>0<>0<>b1e2e323386aa48ee8500e67c6a1a84f<>res://.godot/imported/frame1.png-379591f547884bb4ef103a5f635e5c1f.ctex::
+frame2.png::CompressedTexture2D::1912697473150484692::1774833725::1774833737::1::::<><><>0<>0<>6a885a4cc129ae361351f14729e6b4b4<>res://.godot/imported/frame2.png-191ca4cc230d41264b4e0036b01c8a21.ctex::
 ::res://docs/::1771808565
 SHIELD_POWERUP_DESIGN.md::TextFile::-1::1771808556::0::1::::<><><>0<>0<><>::
-::res://Scenes/::1773197953
-bola.tscn::PackedScene::8198597537881421981::1773196819::0::1::::<><><>0<>0<><>::uid://b1ij4vahdy07n::::res://Scripts/bola.gd<>res://Scripts/shield_aura.gd<>res://Scripts/poison_aura.gd<>res://Scripts/electric_aura.gd<>res://Scripts/bullet_time_aura.gd
+::res://Scenes/::1774838110
+bola.tscn::PackedScene::8198597537881421981::1774833259::0::1::::<><><>0<>0<><>::uid://b1ij4vahdy07n::::res://Scripts/bola.gd<>res://Scripts/shield_aura.gd<>res://Scripts/poison_aura.gd<>res://Scripts/electric_aura.gd<>res://Scripts/bullet_time_aura.gd<>res://Assets/ball/orb/frame 1.png<>res://Assets/ball/orb/frame 2.png<>res://Assets/ball/orb/frame 3.png<>res://Assets/ball/orb/frame 4.png<>res://Assets/ball/orb/frame 5.png<>res://Assets/ball/orb/frame 6.png
 BulletTimePowerUp.tscn::PackedScene::-1::1773196819::0::1::::<><><>0<>0<><>::res://Scripts/bullet_time_powerup.gd
 ElectricPowerUp.tscn::PackedScene::-1::1773195902::0::1::::<><><>0<>0<><>::res://Scripts/electric_powerup.gd
-Enemy.tscn::PackedScene::1414069341530170617::1769635473::0::1::::<><><>0<>0<><>::uid://c6hloo5saycwn::::res://Scripts/enemy.gd
+Enemy.tscn::PackedScene::1414069341530170617::1774838107::0::1::::<><><>0<>0<><>::uid://c6hloo5saycwn::::res://Scripts/enemy.gd
 Laser.tscn::PackedScene::7138535776094392307::1769635477::0::1::::<><><>0<>0<><>::uid://cvih7lw5n345e::::res://Scripts/laser.gd
-main.tscn::PackedScene::4480653006244673941::1773197947::0::1::::<><><>0<>0<><>::uid://do2px6nbfh7yf::::res://Scenes/bola.tscn<>uid://cv8mxfrvtgfxw::::res://Scripts/GameManager.gd<>uid://bq5xpqdpdqtkh::::res://Scripts/enemy_spawner.gd<>uid://ue8rr4rufbfd::::res://Scenes/Enemy.tscn<>uid://b50hg5h3v50sf::::res://Scripts/powerupspawner.gd<>uid://bvbp0wgpywmay::::res://Scenes/ShieldPowerUp.tscn<>uid://uunrbokr3jn1::::res://Scenes/PoisonPowerUp.tscn<>res://Scenes/ElectricPowerUp.tscn<>res://Scenes/BulletTimePowerUp.tscn<>uid://ch10bav4abg2f::::res://Scenes/PowerUp.tscn<>uid://cup7hkytgme57::::res://Scripts/laser_spawner.gd<>uid://c8x7v2k3n4m5p::::res://Scenes/Laser.tscn<>uid://bd5r55ru5xrf0::::res://Scripts/misil_spawner.gd<>uid://bq8xr5m2n3k4p::::res://Scenes/Misil.tscn<>uid://ce6s66sv6ysg1::::res://Scripts/ProgressionManager.gd<>uid://r2lnl3uox30l::::res://Scripts/debug_panel.gd<>uid://dg0mdd677102j::::res://Scripts/start_screen.gd
-Misil.tscn::PackedScene::3578995092599002913::1769635483::0::1::::<><><>0<>0<><>::uid://c4q44qt4wqey::::res://Scripts/misil.gd
+main.tscn::PackedScene::4480653006244673941::1773624820::0::1::::<><><>0<>0<><>::uid://do2px6nbfh7yf::::res://Scenes/bola.tscn<>uid://cv8mxfrvtgfxw::::res://Scripts/GameManager.gd<>uid://bq5xpqdpdqtkh::::res://Scripts/enemy_spawner.gd<>uid://ue8rr4rufbfd::::res://Scenes/Enemy.tscn<>uid://b50hg5h3v50sf::::res://Scripts/powerupspawner.gd<>uid://bvbp0wgpywmay::::res://Scenes/ShieldPowerUp.tscn<>uid://uunrbokr3jn1::::res://Scenes/PoisonPowerUp.tscn<>res://Scenes/ElectricPowerUp.tscn<>res://Scenes/BulletTimePowerUp.tscn<>uid://ch10bav4abg2f::::res://Scenes/PowerUp.tscn<>uid://cup7hkytgme57::::res://Scripts/laser_spawner.gd<>uid://c8x7v2k3n4m5p::::res://Scenes/Laser.tscn<>uid://bd5r55ru5xrf0::::res://Scripts/misil_spawner.gd<>uid://bq8xr5m2n3k4p::::res://Scenes/Misil.tscn<>uid://ce6s66sv6ysg1::::res://Scripts/ProgressionManager.gd<>uid://r2lnl3uox30l::::res://Scripts/debug_panel.gd<>uid://dg0mdd677102j::::res://Scripts/start_screen.gd<>res://Scripts/bottom_spikes.gd<>res://Scripts/vfx_manager.gd
+Misil.tscn::PackedScene::3578995092599002913::1774834516::0::1::::<><><>0<>0<><>::uid://c4q44qt4wqey::::res://Scripts/misil.gd<>uid://cr4xfj7c7gull::::res://Assets/misil/rocket/frame1.png<>uid://2ir33hg8p0dc::::res://Assets/misil/rocket/frame2.png
 PoisonPowerUp.tscn::PackedScene::1445884181872985768::1771811461::0::1::::<><><>0<>0<><>::res://Scripts/poison_powerup.gd
 PowerUp.tscn::PackedScene::5319356838829616667::1769635488::0::1::::<><><>0<>0<><>::uid://bhwd2esb3ealt::::res://Scripts/powerup.gd
 ShieldPowerUp.tscn::PackedScene::3863407343081971928::1771808556::0::1::::<><><>0<>0<><>::res://Scripts/shield_powerup.gd
-::res://Scripts/::1773196827
-bola.gd::GDScript::4228444984585944705::1773196819::0::1::::<>CharacterBody2D<><>0<>0<><>::
+::res://Scripts/::1774838126
+bola.gd::GDScript::4228444984585944705::1774833243::0::1::::<>CharacterBody2D<><>0<>0<><>::
+bottom_spikes.gd::GDScript::4766567710185275991::1773624509::0::1::::<>Area2D<><>0<>0<><>::
 bullet_time_aura.gd::GDScript::316140650174413393::1773196819::0::1::::BulletTimeAura<>Node2D<><>0<>0<><>::
 bullet_time_powerup.gd::GDScript::4675504211030539831::1773196819::0::1::::BulletTimePowerUp<>Area2D<><>0<>0<><>::
 debug_panel.gd::GDScript::1249640265387088869::1773196819::0::1::::<>Control<><>0<>0<><>::
 electric_aura.gd::GDScript::3685222122949000460::1773195902::0::1::::ElectricAura<>Node2D<><>0<>0<><>::
 electric_powerup.gd::GDScript::4427892664171501255::1773195902::0::1::::ElectricPowerUp<>Area2D<><>0<>0<><>::
-enemy.gd::GDScript::6963839834968542593::1773196819::0::1::::Enemy<>StaticBody2D<><>0<>0<><>::
+enemy.gd::GDScript::6963839834968542593::1774838123::0::1::::Enemy<>StaticBody2D<><>0<>0<><>::
 enemy_spawner.gd::GDScript::3572797637959821687::1771811461::0::1::::<>Node2D<><>0<>0<><>::
 GameManager.gd::GDScript::6315701516700067448::1773195902::0::1::::<>Node<><>0<>0<><>::
 laser.gd::GDScript::6263804883295801188::1773196819::0::1::::Laser<>Area2D<><>0<>0<><>::
 laser_spawner.gd::GDScript::6209539913964183372::1771811461::0::1::::<>Node2D<><>0<>0<><>::
-misil.gd::GDScript::201269450848238656::1773196819::0::1::::Misil<>Area2D<><>0<>0<><>::
-misil_spawner.gd::GDScript::2660005912835070047::1771811461::0::1::::<>Node2D<><>0<>0<><>::
+misil.gd::GDScript::201269450848238656::1774833952::0::1::::Misil<>Area2D<><>0<>0<><>::
+misil_spawner.gd::GDScript::2660005912835070047::1773625089::0::1::::<>Node2D<><>0<>0<><>::
 poison_aura.gd::GDScript::5142734086939294169::1771811461::0::1::::PoisonAura<>Node2D<><>0<>0<><>::
 poison_powerup.gd::GDScript::4035715121052584514::1771811461::0::1::::PoisonPowerUp<>Area2D<><>0<>0<><>::
 powerup.gd::GDScript::2923389505145264905::1769628003::0::1::::PowerUp<>Area2D<><>0<>0<><>::
@@ -37,3 +54,4 @@ ProgressionManager.gd::GDScript::5118742374821901438::1769631849::0::1::::<>Node
 shield_aura.gd::GDScript::2259872955655708887::1771808556::0::1::::ShieldAura<>Node2D<><>0<>0<><>::
 shield_powerup.gd::GDScript::8507578376823140151::1771808556::0::1::::ShieldPowerUp<>Area2D<><>0<>0<><>::
 start_screen.gd::GDScript::7632738725010639507::1771811461::0::1::::<>Control<><>0<>0<><>::
+vfx_manager.gd::GDScript::3183691674412505647::1773625451::0::1::::VFXManager<>Node2D<><>0<>0<><>::

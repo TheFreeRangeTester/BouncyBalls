@@ -451,8 +451,8 @@ func _emit_vfx(effect_id: StringName, pos: Vector2):
 
 func update_visual(score: int, power: int):
 	"""Actualiza la apariencia visual de la bola según score (niveles)"""
-	var mesh_instance = get_node_or_null("MeshInstance2D")
-	if not mesh_instance:
+	var visual = get_node_or_null("Visual")
+	if not visual:
 		return
 	
 	# Log del poder (para futuro uso cuando implementemos sprites de daño)
@@ -469,8 +469,9 @@ func update_visual(score: int, power: int):
 	var black_color = Color(0.0, 0.0, 0.0, 1.0)  # Negro máximo
 	var current_color = white_color.lerp(black_color, score_factor)
 	
-	mesh_instance.modulate = current_color
+	if visual is CanvasItem:
+		visual.modulate = current_color
 	
-	# Mantenemos el tamaño original (sin cambios)
-	var base_scale = Vector2(50, 50)
-	mesh_instance.scale = base_scale
+	# Mantenemos el tamaño visual de la bola para que siga encajando con la colision actual.
+	if visual is Node2D:
+		visual.scale = Vector2(0.16, 0.16)

@@ -5,12 +5,14 @@ signal enemy_destroyed
 
 @export var speed: float = 100.0
 @export var hp: int = 3
+@export var visual_faces_right_by_default := false
 
 var direction := 1
 var min_x: float
 var max_x: float
 var is_dying := false  # Bandera para evitar múltiples llamadas a die()
 var hp_label: Label
+var visual: AnimatedSprite2D
 var time_scale := 1.0
 
 # Veneno: -1 hp por segundo durante 3 segundos, no apilable
@@ -28,6 +30,7 @@ const ELECTRIC_DAMAGE_PER_SECOND := 1.0
 func _ready():
 	# Buscamos el label de HP
 	hp_label = get_node_or_null("HPLabel")
+	visual = get_node_or_null("Visual")
 	_sync_time_scale_from_bola()
 	
 	# Calculamos los límites basándonos en las paredes de la escena
@@ -35,6 +38,7 @@ func _ready():
 	
 	# Actualizamos el label con el HP inicial
 	update_hp_display()
+	_update_visual_orientation()
 
 func calculate_limits():
 	# Buscamos el nodo raíz de la escena (Main)
@@ -87,10 +91,12 @@ func _physics_process(delta):
 		# Rebotamos en la pared izquierda
 		global_position.x = min_x + half_width
 		direction = 1  # Cambiamos a dirección derecha
+		_update_visual_orientation()
 	elif next_right >= max_x:
 		# Rebotamos en la pared derecha
 		global_position.x = max_x - half_width
 		direction = -1  # Cambiamos a dirección izquierda
+		_update_visual_orientation()
 	else:
 		# Movemos normalmente si no hay colisión
 		global_position.x = next_x
@@ -258,3 +264,12 @@ func _emit_vfx(effect_id: StringName, pos: Vector2):
 	var vfx_manager = root.get_node_or_null("VFXManager")
 	if vfx_manager and vfx_manager.has_method("emit_effect"):
 		vfx_manager.emit_effect(effect_id, pos)
+
+func _update_visual_orientation():
+	if not visual:
+		return
+
+	if visual_faces_right_by_default:
+		visual.flip_h = direction < 0
+	else:
+		visual.flip_h = direction > 0
