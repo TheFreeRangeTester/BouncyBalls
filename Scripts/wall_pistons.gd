@@ -255,7 +255,7 @@ func _destroy_crushed_node(node: Node2D):
 
 func _get_crushable_nodes() -> Array[Node2D]:
 	var nodes: Array[Node2D] = []
-	for group_name in [&"enemies", &"powerups", &"misiles"]:
+	for group_name in [&"enemies", &"powerups", &"misiles", &"player_projectiles"]:
 		for node in get_tree().get_nodes_in_group(group_name):
 			if node is Node2D:
 				nodes.append(node)

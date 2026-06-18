@@ -5,3 +5,7 @@ res://Scripts/ProgressionManager.gd
 res://Scripts/wall_pistons.gd
 res://Scripts/wall_piston_spawner.gd
 res://Scripts/debug_panel.gd
+res://Scripts/powerupspawner.gd
+res://Scripts/enemy_target_missile.gd
+res://Scripts/missile_volley_set.gd
+res://Scenes/EnemyTargetMissile.tscn

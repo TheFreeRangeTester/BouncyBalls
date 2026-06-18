@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/missile_volley_shard.gd" id="1_shard"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_shard"]
+radius = 13.0
+
+[node name="MissileVolleyShard" type="Area2D"]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_shard")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_shard")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color(1, 0.46, 0.18, 1)
+polygon = PackedVector2Array(0, -14, 5, -5, 14, -3, 7, 4, 9, 14, 0, 9, -9, 14, -7, 4, -14, -3, -5, -5)

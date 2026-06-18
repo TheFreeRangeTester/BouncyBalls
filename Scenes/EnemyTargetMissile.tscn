@@ -1,0 +1,37 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://Scripts/enemy_target_missile.gd" id="1_projectile"]
+[ext_resource type="Texture2D" uid="uid://cr4xfj7c7gull" path="res://Assets/misil/rocket/frame1.png" id="2_rocket_1"]
+[ext_resource type="Texture2D" uid="uid://2ir33hg8p0dc" path="res://Assets/misil/rocket/frame2.png" id="3_rocket_2"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_projectile"]
+radius = 7.0
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_projectile"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_rocket_1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_rocket_2")
+}],
+"loop": true,
+"name": &"fly",
+"speed": 12.0
+}]
+
+[node name="EnemyTargetMissile" type="Area2D"]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_projectile")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_projectile")
+
+[node name="Visual" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, 2)
+scale = Vector2(0.045, 0.045)
+sprite_frames = SubResource("SpriteFrames_projectile")
+animation = &"fly"
+autoplay = "fly"

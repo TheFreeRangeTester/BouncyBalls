@@ -9,6 +9,8 @@ extends Node2D
 @export var electric_spawn_chance := 0.2  # Probabilidad 0-1 de spawear electricidad
 @export var bullet_time_powerup_scene: PackedScene  # Opcional: power-up de bullet time
 @export var bullet_time_spawn_chance := 0.18
+@export var missile_volley_scene: PackedScene
+@export var missile_volley_spawn_chance := 0.06
 @export var boosted_special_score_threshold := 15  # Desde este score aumentan veneno y electricidad
 @export var boosted_poison_spawn_chance := 0.4
 @export var boosted_electric_spawn_chance := 0.35
@@ -142,9 +144,15 @@ func _get_current_poison_spawn_chance() -> float:
 func _is_bullet_time_enabled() -> bool:
 	return _get_current_score() >= 20
 
+func _is_missile_volley_enabled() -> bool:
+	return _get_current_score() >= 20
+
 func spawn_powerup():
 	var scene_to_spawn: PackedScene
-	if shield_powerup_scene and _are_lasers_enabled() and randf() < shield_spawn_chance:
+	if missile_volley_scene and _is_missile_volley_enabled() and randf() < missile_volley_spawn_chance:
+		spawn_missile_volley()
+		return
+	elif shield_powerup_scene and _are_lasers_enabled() and randf() < shield_spawn_chance:
 		scene_to_spawn = shield_powerup_scene
 	elif bullet_time_powerup_scene and _is_bullet_time_enabled() and randf() < bullet_time_spawn_chance:
 		scene_to_spawn = bullet_time_powerup_scene
@@ -196,6 +204,35 @@ func spawn_powerup():
 	
 	get_parent().add_child(powerup)
 	print("Power-up spawneado en: ", powerup.global_position)
+
+func spawn_missile_volley():
+	if not missile_volley_scene:
+		return
+
+	var volley = missile_volley_scene.instantiate()
+	if not (volley is MissileVolleySet):
+		print("PowerUpSpawner: missile_volley_scene no es MissileVolleySet")
+		volley.queue_free()
+		return
+
+	var typed_volley: MissileVolleySet = volley
+	var spawn_margin := typed_volley.spread_radius + 20.0
+	var center_min_x: float = min_spawn_x + spawn_margin
+	var center_max_x: float = max_spawn_x - spawn_margin
+	var center_min_y: float = min_spawn_y + spawn_margin
+	var center_max_y: float = max_spawn_y - spawn_margin
+
+	if center_max_x <= center_min_x:
+		center_min_x = min_spawn_x
+		center_max_x = max_spawn_x
+	if center_max_y <= center_min_y:
+		center_min_y = min_spawn_y
+		center_max_y = max_spawn_y
+
+	var center := Vector2(randf_range(center_min_x, center_max_x), randf_range(center_min_y, center_max_y))
+	get_parent().add_child(typed_volley)
+	typed_volley.start(center, min_spawn_x, max_spawn_x, min_spawn_y, max_spawn_y)
+	print("Missile volley spawneado en: ", center)
 
 func pause_spawning():
 	if timer:

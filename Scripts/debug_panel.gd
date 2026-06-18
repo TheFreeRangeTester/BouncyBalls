@@ -3,7 +3,7 @@ extends Control
 ## Panel de debug para probar power-ups y enemigos en escenarios controlados.
 ## Se accede desde la pantalla inicial (Debug mode). Solo spawnea bola, power-up elegido y un enemigo.
 
-enum PowerUpType { NINGUNO, BOOST, SHIELD, POISON, ELECTRIC, BULLET_TIME }
+enum PowerUpType { NINGUNO, BOOST, SHIELD, POISON, ELECTRIC, BULLET_TIME, MISSILE_VOLLEY }
 
 @export var bola_spawn_pos := Vector2(307, 55)
 @export var powerup_spawn_pos := Vector2(400, 250)
@@ -14,10 +14,13 @@ enum PowerUpType { NINGUNO, BOOST, SHIELD, POISON, ELECTRIC, BULLET_TIME }
 @export var poison_powerup_scene: PackedScene
 @export var electric_powerup_scene: PackedScene
 @export var bullet_time_powerup_scene: PackedScene
+@export var missile_volley_scene: PackedScene
 @export var enemy_scene: PackedScene
 
 var _powerup_option: OptionButton
 var _enemy_hp_spin: SpinBox
+var _enemy_count_spin: SpinBox
+var _auto_pistons_check: CheckBox
 var _spawn_btn: Button
 var _spawn_pistons_btn: Button
 
@@ -35,6 +38,8 @@ func _ready():
 		electric_powerup_scene = load("res://Scenes/ElectricPowerUp.tscn") as PackedScene
 	if not bullet_time_powerup_scene:
 		bullet_time_powerup_scene = load("res://Scenes/BulletTimePowerUp.tscn") as PackedScene
+	if not missile_volley_scene:
+		missile_volley_scene = load("res://Scenes/MissileVolleySet.tscn") as PackedScene
 	if not enemy_scene:
 		enemy_scene = load("res://Scenes/Enemy.tscn") as PackedScene
 
@@ -48,7 +53,7 @@ func _build_ui():
 	panel.offset_left = -280
 	panel.offset_right = 20
 	panel.offset_top = 20
-	panel.offset_bottom = 310
+	panel.offset_bottom = 380
 	add_child(panel)
 	
 	var vbox = VBoxContainer.new()
@@ -78,6 +83,7 @@ func _build_ui():
 	_powerup_option.add_item("Poison", PowerUpType.POISON)
 	_powerup_option.add_item("Electric", PowerUpType.ELECTRIC)
 	_powerup_option.add_item("Bullet Time", PowerUpType.BULLET_TIME)
+	_powerup_option.add_item("Missile Volley", PowerUpType.MISSILE_VOLLEY)
 	_powerup_option.selected = 0
 	vbox.add_child(_powerup_option)
 	
@@ -92,6 +98,23 @@ func _build_ui():
 	_enemy_hp_spin.value = 5
 	_enemy_hp_spin.step = 1
 	vbox.add_child(_enemy_hp_spin)
+
+	var count_label = Label.new()
+	count_label.text = "Cantidad enemigos:"
+	vbox.add_child(count_label)
+
+	_enemy_count_spin = SpinBox.new()
+	_enemy_count_spin.min_value = 0
+	_enemy_count_spin.max_value = 12
+	_enemy_count_spin.value = 1
+	_enemy_count_spin.step = 1
+	vbox.add_child(_enemy_count_spin)
+
+	_auto_pistons_check = CheckBox.new()
+	_auto_pistons_check.text = "Pistones auto"
+	_auto_pistons_check.button_pressed = false
+	_auto_pistons_check.toggled.connect(_on_auto_pistons_toggled)
+	vbox.add_child(_auto_pistons_check)
 	
 	# Botón Spawn
 	_spawn_btn = Button.new()
@@ -116,6 +139,9 @@ func _on_spawn_pressed():
 func _on_spawn_pistons_pressed():
 	_spawn_debug_pistons()
 
+func _on_auto_pistons_toggled(enabled: bool):
+	_set_debug_pistons_enabled(enabled)
+
 func _on_back_pressed():
 	visible = false
 	var root = get_tree().root.get_child(0)
@@ -131,6 +157,8 @@ func _on_back_pressed():
 			game_manager.state = 1  # WAITING_TO_START
 	if wall_piston_spawner and wall_piston_spawner.has_method("disable_debug_spawning"):
 		wall_piston_spawner.disable_debug_spawning()
+	if _auto_pistons_check:
+		_auto_pistons_check.button_pressed = false
 	# Pausar bola y limpiar
 	var bola = root.get_node_or_null("Bola")
 	if bola and bola.has_method("pause_ball"):
@@ -199,10 +227,15 @@ func _spawn_debug_scenario():
 		_spawn_powerup(electric_powerup_scene, powerup_spawn_pos, bola, powerup_spawner)
 	elif pw_type == PowerUpType.BULLET_TIME and bullet_time_powerup_scene:
 		_spawn_powerup(bullet_time_powerup_scene, powerup_spawn_pos, bola, powerup_spawner)
+	elif pw_type == PowerUpType.MISSILE_VOLLEY and missile_volley_scene:
+		_spawn_missile_volley(root)
 	
-	# Spawnear enemigo
+	# Spawnear enemigos
 	if enemy_scene:
-		_spawn_enemy(int(_enemy_hp_spin.value), enemy_spawn_pos, root, game_manager)
+		_spawn_enemies(int(_enemy_count_spin.value), int(_enemy_hp_spin.value), root, game_manager)
+
+	var auto_pistons_enabled := _auto_pistons_check != null and _auto_pistons_check.button_pressed
+	_set_debug_pistons_enabled(auto_pistons_enabled)
 	
 	# Ocultar StartLabel si existe
 	var start_label = root.get_node_or_null("CanvasLayer/UI/StartLabel")
@@ -237,6 +270,22 @@ func _spawn_debug_pistons():
 
 	wall_piston_spawner.spawn_pistons()
 
+func _set_debug_pistons_enabled(enabled: bool):
+	var root = get_tree().root.get_child(0)
+	var wall_piston_spawner = root.get_node_or_null("WallPistonSpawner")
+	if not wall_piston_spawner:
+		return
+
+	if enabled:
+		if wall_piston_spawner.has_method("enable_debug_spawning"):
+			wall_piston_spawner.enable_debug_spawning()
+	else:
+		if wall_piston_spawner.has_method("disable_debug_spawning"):
+			wall_piston_spawner.disable_debug_spawning()
+		for node in get_tree().get_nodes_in_group("wall_pistons"):
+			if is_instance_valid(node):
+				node.queue_free()
+
 func _spawn_powerup(scene: PackedScene, pos: Vector2, bola: Node, powerup_spawner: Node):
 	var powerup = scene.instantiate()
 	powerup.global_position = pos
@@ -260,6 +309,35 @@ func _spawn_powerup(scene: PackedScene, pos: Vector2, bola: Node, powerup_spawne
 	
 	var parent = get_tree().root.get_child(0)
 	parent.add_child(powerup)
+
+func _spawn_missile_volley(parent: Node):
+	var volley = missile_volley_scene.instantiate()
+	if not (volley is MissileVolleySet):
+		volley.queue_free()
+		return
+
+	var typed_volley: MissileVolleySet = volley
+	parent.add_child(typed_volley)
+	typed_volley.start(powerup_spawn_pos, 90.0, get_viewport_rect().size.x - 90.0, 70.0, 560.0)
+
+func _spawn_enemies(count: int, hp: int, parent: Node, game_manager: Node):
+	if count <= 0:
+		return
+
+	var viewport := get_viewport_rect()
+	var columns: int = min(count, 4)
+	var spacing_x := 90.0
+	var spacing_y := 58.0
+	var start_x: float = clamp(enemy_spawn_pos.x - spacing_x * float(columns - 1) * 0.5, 90.0, viewport.size.x - 90.0)
+
+	for i in range(count):
+		var col: int = i % columns
+		var row := int(i / columns)
+		var x: float = start_x + float(col) * spacing_x
+		var y := enemy_spawn_pos.y - float(row) * spacing_y
+		x = clamp(x, 90.0, viewport.size.x - 90.0)
+		y = clamp(y, 90.0, 560.0)
+		_spawn_enemy(hp, Vector2(x, y), parent, game_manager)
 
 func _spawn_enemy(hp: int, pos: Vector2, parent: Node, game_manager: Node):
 	var enemy = enemy_scene.instantiate()

@@ -142,11 +142,11 @@ func start_debug_mode():
 		start_screen.visible = false
 	if debug_panel:
 		debug_panel.visible = true
-	if wall_piston_spawner and wall_piston_spawner.has_method("enable_debug_spawning"):
-		wall_piston_spawner.enable_debug_spawning()
+	if wall_piston_spawner and wall_piston_spawner.has_method("disable_debug_spawning"):
+		wall_piston_spawner.disable_debug_spawning()
 	
 	state = GameState.PLAYING
-	# En debug solo dejamos los pistones en automático; el resto se controla desde el panel.
+	# En debug los spawners se controlan desde el panel.
 
 func start_game():
 	if start_screen:
