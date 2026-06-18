@@ -25,8 +25,10 @@ var active_piston: WallPistons
 var timer: Timer
 var _rng := RandomNumberGenerator.new()
 var _normal_spawn_interval := 15.0
+var _time_scale := 1.0
 
 func _ready():
+	add_to_group("wall_piston_spawners")
 	_rng.randomize()
 	_normal_spawn_interval = spawn_interval
 	_resolve_references()
@@ -64,6 +66,14 @@ func pause_spawning():
 func resume_spawning():
 	if is_enabled and timer:
 		timer.start()
+
+func set_time_scale(new_scale: float):
+	var clamped_scale: float = max(0.01, new_scale)
+	if is_equal_approx(_time_scale, clamped_scale):
+		return
+
+	_rescale_timer(timer, _time_scale, clamped_scale)
+	_time_scale = clamped_scale
 
 func reset():
 	pause_spawning()
@@ -110,6 +120,8 @@ func spawn_pistons():
 	active_piston.crush_gap = crush_gap
 	active_piston.auto_activate = false
 	active_piston.repeat_cycles = false
+	if bola and bola.has_method("get_world_time_scale"):
+		active_piston.set_time_scale(bola.get_world_time_scale())
 
 	get_parent().add_child(active_piston)
 	active_piston.configure_bounds(bounds.x + wall_clearance, bounds.y - wall_clearance, spawn_y)
@@ -184,3 +196,14 @@ func _get_bottom_limit() -> float:
 	if bola and "reset_y" in bola:
 		return bola.reset_y
 	return get_viewport_rect().size.y - 40.0
+
+func _rescale_timer(timer_to_rescale: Timer, old_scale: float, new_scale: float):
+	if not timer_to_rescale or timer_to_rescale.is_stopped():
+		return
+
+	var was_paused := timer_to_rescale.paused
+	var gameplay_remaining := timer_to_rescale.time_left * old_scale
+	timer_to_rescale.stop()
+	timer_to_rescale.wait_time = gameplay_remaining / new_scale
+	timer_to_rescale.start()
+	timer_to_rescale.paused = was_paused

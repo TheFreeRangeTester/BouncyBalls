@@ -43,6 +43,7 @@ var _left_visual: Polygon2D
 var _right_visual: Polygon2D
 var _rng := RandomNumberGenerator.new()
 var _has_crushed_player := false
+var _time_scale := 1.0
 
 func _ready():
 	add_to_group("wall_pistons")
@@ -71,11 +72,14 @@ func stop_and_reset():
 	_has_crushed_player = false
 	_apply_open_positions()
 
+func set_time_scale(new_scale: float):
+	_time_scale = max(0.01, new_scale)
+
 func _physics_process(delta):
 	if _state == CycleState.IDLE:
 		return
 
-	_state_time += delta
+	_state_time += delta * _time_scale
 	match _state:
 		CycleState.WARNING:
 			_update_warning()

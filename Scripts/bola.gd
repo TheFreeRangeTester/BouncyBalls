@@ -436,7 +436,7 @@ func _set_world_time_scale(new_scale: float):
 	_apply_world_time_scale()
 
 func _apply_world_time_scale():
-	for group_name in ["enemies", "lasers", "misiles"]:
+	for group_name in ["enemies", "lasers", "misiles", "wall_pistons", "wall_piston_spawners"]:
 		for node in get_tree().get_nodes_in_group(group_name):
 			if is_instance_valid(node) and node.has_method("set_time_scale"):
 				node.set_time_scale(world_time_scale)
