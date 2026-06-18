@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://b43px2v1xgjy8"]
+[gd_scene load_steps=25 format=3 uid="uid://b43px2v1xgjy8"]
 
 [ext_resource type="PackedScene" uid="uid://do2px6nbfh7yf" path="res://Scenes/bola.tscn" id="1_jjgbg"]
 [ext_resource type="Script" uid="uid://cv8mxfrvtgfxw" path="res://Scripts/GameManager.gd" id="2_bo1nx"]
@@ -19,6 +19,8 @@
 [ext_resource type="Script" uid="uid://dg0mdd677102j" path="res://Scripts/start_screen.gd" id="13_start"]
 [ext_resource type="Script" path="res://Scripts/bottom_spikes.gd" id="14_bottom_spikes"]
 [ext_resource type="Script" path="res://Scripts/vfx_manager.gd" id="15_vfx_manager"]
+[ext_resource type="PackedScene" path="res://Scenes/WallPistons.tscn" id="16_wall_pistons"]
+[ext_resource type="Script" path="res://Scripts/wall_piston_spawner.gd" id="17_wall_piston_spawner"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bo1nx"]
 size = Vector2(50, 2000)
@@ -44,7 +46,7 @@ min_bounce_speed = 150.0
 [node name="VFXManager" type="Node2D" parent="."]
 script = ExtResource("15_vfx_manager")
 
-[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("bola", "start_screen", "debug_panel", "enemy_spawner", "powerup_spawner", "laser_spawner", "misil_spawner", "progression_manager", "score_label", "attack_power_label")]
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("bola", "start_screen", "debug_panel", "enemy_spawner", "powerup_spawner", "laser_spawner", "misil_spawner", "wall_piston_spawner", "progression_manager", "score_label", "attack_power_label")]
 script = ExtResource("2_bo1nx")
 bola = NodePath("../Bola")
 start_screen = NodePath("../CanvasLayer/UI/StartScreen")
@@ -53,6 +55,7 @@ enemy_spawner = NodePath("../EnemySpawner")
 powerup_spawner = NodePath("../PowerUpSpawner")
 laser_spawner = NodePath("../LaserSpawner")
 misil_spawner = NodePath("../MisilSpawner")
+wall_piston_spawner = NodePath("../WallPistonSpawner")
 progression_manager = NodePath("../ProgressionManager")
 score_label = NodePath("../CanvasLayer/UI/ScoreLabel")
 attack_power_label = NodePath("../CanvasLayer/UI/AttackPowerLabel")
@@ -213,9 +216,17 @@ misil_scene = ExtResource("10_misil")
 [node name="Timer" type="Timer" parent="MisilSpawner"]
 wait_time = 5.0
 
-[node name="ProgressionManager" type="Node" parent="." node_paths=PackedStringArray("enemy_spawner", "laser_spawner", "misil_spawner", "bola")]
+[node name="WallPistonSpawner" type="Node2D" parent="." node_paths=PackedStringArray("bola", "walls", "bottom_hazard")]
+script = ExtResource("17_wall_piston_spawner")
+piston_scene = ExtResource("16_wall_pistons")
+bola = NodePath("../Bola")
+walls = NodePath("../Walls")
+bottom_hazard = NodePath("../BottomSpikes")
+
+[node name="ProgressionManager" type="Node" parent="." node_paths=PackedStringArray("enemy_spawner", "laser_spawner", "misil_spawner", "wall_piston_spawner", "bola")]
 script = ExtResource("11_progression")
 enemy_spawner = NodePath("../EnemySpawner")
 laser_spawner = NodePath("../LaserSpawner")
 misil_spawner = NodePath("../MisilSpawner")
+wall_piston_spawner = NodePath("../WallPistonSpawner")
 bola = NodePath("../Bola")

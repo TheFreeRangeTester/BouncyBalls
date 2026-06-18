@@ -7,6 +7,7 @@ extends Node
 @export var powerup_spawner: Node
 @export var laser_spawner: Node
 @export var misil_spawner: Node
+@export var wall_piston_spawner: Node
 @export var progression_manager: Node
 @export var score_label: Label
 @export var attack_power_label: Label
@@ -51,6 +52,8 @@ func _ready():
 		laser_spawner.pause_spawning()
 	if misil_spawner:
 		misil_spawner.pause_spawning()
+	if wall_piston_spawner:
+		wall_piston_spawner.pause_spawning()
 	
 	update_score_display()
 	update_attack_power_display()
@@ -97,6 +100,11 @@ func _on_ball_fell():
 	# Detenemos spawn de misiles
 	if misil_spawner:
 		misil_spawner.pause_spawning()
+	if wall_piston_spawner:
+		if wall_piston_spawner.has_method("reset"):
+			wall_piston_spawner.reset()
+		else:
+			wall_piston_spawner.pause_spawning()
 
 	# Pausamos enemigos existentes
 	for enemy in get_tree().get_nodes_in_group("enemies"):
@@ -112,6 +120,10 @@ func _on_ball_fell():
 	for misil in get_tree().get_nodes_in_group("misiles"):
 		if misil.has_method("pause"):
 			misil.pause()
+
+	for piston in get_tree().get_nodes_in_group("wall_pistons"):
+		if piston.has_method("stop_and_reset"):
+			piston.stop_and_reset()
 
 	start_screen.visible = true
 	if debug_panel and debug_mode:
@@ -130,9 +142,11 @@ func start_debug_mode():
 		start_screen.visible = false
 	if debug_panel:
 		debug_panel.visible = true
+	if wall_piston_spawner and wall_piston_spawner.has_method("enable_debug_spawning"):
+		wall_piston_spawner.enable_debug_spawning()
 	
 	state = GameState.PLAYING
-	# En debug no activamos spawners; el usuario usa "Spawn escenario"
+	# En debug solo dejamos los pistones en automático; el resto se controla desde el panel.
 
 func start_game():
 	if start_screen:
@@ -165,6 +179,9 @@ func start_game():
 	if misil_spawner:
 		misil_spawner.reset()
 		# No lo activamos aquí, el ProgressionManager lo hará según el score
+
+	if wall_piston_spawner:
+		wall_piston_spawner.reset()
 
 	# Reanudamos la bola (esto también reinicia el attack_power)
 	bola.resume_ball()

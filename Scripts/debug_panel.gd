@@ -19,6 +19,7 @@ enum PowerUpType { NINGUNO, BOOST, SHIELD, POISON, ELECTRIC, BULLET_TIME }
 var _powerup_option: OptionButton
 var _enemy_hp_spin: SpinBox
 var _spawn_btn: Button
+var _spawn_pistons_btn: Button
 
 func _ready():
 	visible = false
@@ -47,7 +48,7 @@ func _build_ui():
 	panel.offset_left = -280
 	panel.offset_right = 20
 	panel.offset_top = 20
-	panel.offset_bottom = 260
+	panel.offset_bottom = 310
 	add_child(panel)
 	
 	var vbox = VBoxContainer.new()
@@ -97,6 +98,11 @@ func _build_ui():
 	_spawn_btn.text = "Spawn escenario"
 	_spawn_btn.pressed.connect(_on_spawn_pressed)
 	vbox.add_child(_spawn_btn)
+
+	_spawn_pistons_btn = Button.new()
+	_spawn_pistons_btn.text = "Spawn pistones"
+	_spawn_pistons_btn.pressed.connect(_on_spawn_pistons_pressed)
+	vbox.add_child(_spawn_pistons_btn)
 	
 	# Botón Volver
 	var back_btn = Button.new()
@@ -107,11 +113,15 @@ func _build_ui():
 func _on_spawn_pressed():
 	_spawn_debug_scenario()
 
+func _on_spawn_pistons_pressed():
+	_spawn_debug_pistons()
+
 func _on_back_pressed():
 	visible = false
 	var root = get_tree().root.get_child(0)
 	var start_screen = root.get_node_or_null("CanvasLayer/UI/StartScreen")
 	var game_manager = root.get_node_or_null("GameManager")
+	var wall_piston_spawner = root.get_node_or_null("WallPistonSpawner")
 	if start_screen:
 		start_screen.visible = true
 	if game_manager:
@@ -119,6 +129,8 @@ func _on_back_pressed():
 			game_manager.debug_mode = false
 		if "state" in game_manager:
 			game_manager.state = 1  # WAITING_TO_START
+	if wall_piston_spawner and wall_piston_spawner.has_method("disable_debug_spawning"):
+		wall_piston_spawner.disable_debug_spawning()
 	# Pausar bola y limpiar
 	var bola = root.get_node_or_null("Bola")
 	if bola and bola.has_method("pause_ball"):
@@ -128,6 +140,9 @@ func _on_back_pressed():
 		if is_instance_valid(node):
 			node.queue_free()
 	for node in get_tree().get_nodes_in_group("powerups"):
+		if is_instance_valid(node):
+			node.queue_free()
+	for node in get_tree().get_nodes_in_group("wall_pistons"):
 		if is_instance_valid(node):
 			node.queue_free()
 
@@ -159,6 +174,9 @@ func _spawn_debug_scenario():
 		if is_instance_valid(node):
 			node.queue_free()
 	for node in get_tree().get_nodes_in_group("powerups"):
+		if is_instance_valid(node):
+			node.queue_free()
+	for node in get_tree().get_nodes_in_group("wall_pistons"):
 		if is_instance_valid(node):
 			node.queue_free()
 	
@@ -194,6 +212,30 @@ func _spawn_debug_scenario():
 	# Forzar estado playing en GameManager (PLAYING = 0)
 	if game_manager and "state" in game_manager:
 		game_manager.state = 0
+
+func _spawn_debug_pistons():
+	var root = get_tree().root.get_child(0)
+	var wall_piston_spawner = root.get_node_or_null("WallPistonSpawner")
+	var bola = root.get_node_or_null("Bola")
+	var game_manager = root.get_node_or_null("GameManager")
+
+	if game_manager and "state" in game_manager:
+		game_manager.state = 0
+	if bola and bola.has_method("resume_ball"):
+		bola.resume_ball()
+
+	if not wall_piston_spawner or not wall_piston_spawner.has_method("spawn_pistons"):
+		push_error("DebugPanel: No se encontró WallPistonSpawner")
+		return
+
+	if wall_piston_spawner.has_method("pause_spawning"):
+		wall_piston_spawner.pause_spawning()
+
+	for node in get_tree().get_nodes_in_group("wall_pistons"):
+		if is_instance_valid(node):
+			node.queue_free()
+
+	wall_piston_spawner.spawn_pistons()
 
 func _spawn_powerup(scene: PackedScene, pos: Vector2, bola: Node, powerup_spawner: Node):
 	var powerup = scene.instantiate()

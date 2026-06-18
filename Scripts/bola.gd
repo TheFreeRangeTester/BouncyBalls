@@ -190,6 +190,9 @@ func die_from_combat():
 		has_fallen = true
 		emit_signal("fell")
 
+func die_from_hazard():
+	die_from_combat()
+
 func _on_powerup_collected(power_amount: int):
 	"""Maneja la recolección de un power-up"""
 	# Aumentamos el boost temporal

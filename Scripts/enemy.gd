@@ -101,6 +101,11 @@ func _physics_process(delta):
 		# Movemos normalmente si no hay colisión
 		global_position.x = next_x
 
+func set_direction(new_direction: int):
+	"""Fija la dirección horizontal inicial del enemigo y sincroniza su visual."""
+	direction = 1 if new_direction >= 0 else -1
+	_update_visual_orientation()
+
 func take_damage(amount: int):
 	if is_dying:
 		return  # Ya está muriendo, ignoramos más daño
@@ -212,6 +217,16 @@ func die():
 	electric_tick_accumulator = 0.0
 	_emit_vfx(&"enemy_kill", global_position)
 	emit_signal("enemy_destroyed")
+	queue_free()
+
+func die_from_hazard():
+	if is_dying:
+		return
+
+	is_dying = true
+	electrified_sources.clear()
+	electric_tick_accumulator = 0.0
+	_emit_vfx(&"enemy_kill", global_position)
 	queue_free()
 
 func pause():

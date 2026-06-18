@@ -1,19 +1,16 @@
-[gd_scene load_steps=13 format=3 uid="uid://do2px6nbfh7yf"]
+[gd_scene load_steps=14 format=3 uid="uid://do2px6nbfh7yf"]
 
 [ext_resource type="Script" uid="uid://b1ij4vahdy07n" path="res://Scripts/bola.gd" id="1_17s4t"]
-[ext_resource type="Script" path="res://Scripts/shield_aura.gd" id="2_shield_aura"]
-[ext_resource type="Script" path="res://Scripts/poison_aura.gd" id="3_poison_aura"]
-[ext_resource type="Script" path="res://Scripts/electric_aura.gd" id="4_electric_aura"]
-[ext_resource type="Script" path="res://Scripts/bullet_time_aura.gd" id="5_bullet_time_aura"]
-[ext_resource type="Texture2D" path="res://Assets/ball/orb/frame 1.png" id="6_orb_1"]
-[ext_resource type="Texture2D" path="res://Assets/ball/orb/frame 2.png" id="7_orb_2"]
-[ext_resource type="Texture2D" path="res://Assets/ball/orb/frame 3.png" id="8_orb_3"]
-[ext_resource type="Texture2D" path="res://Assets/ball/orb/frame 4.png" id="9_orb_4"]
-[ext_resource type="Texture2D" path="res://Assets/ball/orb/frame 5.png" id="10_orb_5"]
-[ext_resource type="Texture2D" path="res://Assets/ball/orb/frame 6.png" id="11_orb_6"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_17s4t"]
-radius = 25.317978
+[ext_resource type="Script" uid="uid://7gx1oxinw4ml" path="res://Scripts/shield_aura.gd" id="2_shield_aura"]
+[ext_resource type="Script" uid="uid://cfjgcxm7crcqj" path="res://Scripts/poison_aura.gd" id="3_poison_aura"]
+[ext_resource type="Script" uid="uid://bsrfcm4hckmy3" path="res://Scripts/electric_aura.gd" id="4_electric_aura"]
+[ext_resource type="Script" uid="uid://ere14uyugqxt" path="res://Scripts/bullet_time_aura.gd" id="5_bullet_time_aura"]
+[ext_resource type="Texture2D" uid="uid://dan7edtt54f5d" path="res://Assets/ball/orb/frame 1.png" id="6_orb_1"]
+[ext_resource type="Texture2D" uid="uid://bw3mrjcwo4brv" path="res://Assets/ball/orb/frame 2.png" id="7_orb_2"]
+[ext_resource type="Texture2D" uid="uid://ixe4fce0mbg4" path="res://Assets/ball/orb/frame 3.png" id="8_orb_3"]
+[ext_resource type="Texture2D" uid="uid://cwitmadjehebx" path="res://Assets/ball/orb/frame 4.png" id="9_orb_4"]
+[ext_resource type="Texture2D" uid="uid://cne8ag4dldq0a" path="res://Assets/ball/orb/frame 5.png" id="10_orb_5"]
+[ext_resource type="Texture2D" uid="uid://ieb0fx3dn8kh" path="res://Assets/ball/orb/frame 6.png" id="11_orb_6"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_orb"]
 animations = [{
@@ -41,6 +38,9 @@ animations = [{
 "speed": 10.0
 }]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_17s4t"]
+radius = 25.317978
+
 [node name="Bola" type="CharacterBody2D"]
 script = ExtResource("1_17s4t")
 
@@ -50,6 +50,8 @@ scale = Vector2(0.16, 0.16)
 sprite_frames = SubResource("SpriteFrames_orb")
 animation = &"idle"
 autoplay = "idle"
+frame = 5
+frame_progress = 0.8063111
 
 [node name="ShieldAura" type="Node2D" parent="."]
 position = Vector2(1, 0)

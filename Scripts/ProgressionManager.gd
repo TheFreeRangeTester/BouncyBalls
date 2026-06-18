@@ -7,6 +7,7 @@ signal ball_visual_changed(score: int, power: int)
 @export var enemy_spawner: Node
 @export var laser_spawner: Node
 @export var misil_spawner: Node
+@export var wall_piston_spawner: Node
 @export var bola: CharacterBody2D
 
 # Configuración de etapas de dificultad
@@ -25,7 +26,8 @@ var difficulty_stages = [
 		"enemy_spawn_interval": 2.5,
 		"lasers_enabled": false,
 		"misiles_enabled": false,
-		"misiles_max": 0
+		"misiles_max": 0,
+		"wall_pistons_enabled": false
 	},
 	{
 		"score_threshold": 10,  # A los 10 puntos: solo se activan los láseres
@@ -34,7 +36,8 @@ var difficulty_stages = [
 		"enemy_spawn_interval": 2.0,
 		"lasers_enabled": true,
 		"misiles_enabled": false,
-		"misiles_max": 0
+		"misiles_max": 0,
+		"wall_pistons_enabled": false
 	},
 	{
 		"score_threshold": 20,  # A los 20 puntos: 1 misil
@@ -43,7 +46,8 @@ var difficulty_stages = [
 		"enemy_spawn_interval": 1.8,
 		"lasers_enabled": true,
 		"misiles_enabled": true,
-		"misiles_max": 1
+		"misiles_max": 1,
+		"wall_pistons_enabled": true
 	},
 	{
 		"score_threshold": 30,  # A los 30 puntos: 2 misiles
@@ -52,7 +56,8 @@ var difficulty_stages = [
 		"enemy_spawn_interval": 1.5,
 		"lasers_enabled": true,
 		"misiles_enabled": true,
-		"misiles_max": 2
+		"misiles_max": 2,
+		"wall_pistons_enabled": true
 	},
 	{
 		"score_threshold": 50,  # A los 50 puntos: 3 misiles
@@ -61,7 +66,8 @@ var difficulty_stages = [
 		"enemy_spawn_interval": 1.2,
 		"lasers_enabled": true,
 		"misiles_enabled": true,
-		"misiles_max": 3
+		"misiles_max": 3,
+		"wall_pistons_enabled": true
 	}
 ]
 
@@ -80,6 +86,8 @@ func _ready():
 		print("ProgressionManager: ADVERTENCIA - laser_spawner no está asignado")
 	if not misil_spawner:
 		print("ProgressionManager: ADVERTENCIA - misil_spawner no está asignado")
+	if not wall_piston_spawner:
+		print("ProgressionManager: ADVERTENCIA - wall_piston_spawner no está asignado")
 	if not enemy_spawner:
 		print("ProgressionManager: ADVERTENCIA - enemy_spawner no está asignado")
 	
@@ -91,6 +99,8 @@ func _ready():
 		laser_spawner.pause_spawning()
 	if misil_spawner and misil_spawner.has_method("pause_spawning"):
 		misil_spawner.pause_spawning()
+	if wall_piston_spawner and wall_piston_spawner.has_method("pause_spawning"):
+		wall_piston_spawner.pause_spawning()
 	
 	# Aseguramos que max_misiles esté en 0 inicialmente
 	if misil_spawner and misil_spawner.has_method("set_max_misiles"):
@@ -106,6 +116,8 @@ func resolve_references():
 		laser_spawner = root.get_node_or_null("LaserSpawner")
 	if not misil_spawner:
 		misil_spawner = root.get_node_or_null("MisilSpawner")
+	if not wall_piston_spawner:
+		wall_piston_spawner = root.get_node_or_null("WallPistonSpawner")
 	if not bola:
 		bola = root.get_node_or_null("Bola")
 
@@ -189,6 +201,19 @@ func apply_stage(stage_index: int):
 				print("ProgressionManager: Desactivando misiles")
 	else:
 		print("ProgressionManager: ERROR - misil_spawner es null")
+
+	if wall_piston_spawner:
+		if wall_piston_spawner.has_method("set_enabled"):
+			wall_piston_spawner.set_enabled(stage.wall_pistons_enabled)
+		if stage.wall_pistons_enabled:
+			if wall_piston_spawner.has_method("resume_spawning"):
+				print("ProgressionManager: Activando wall pistons")
+				wall_piston_spawner.resume_spawning()
+		else:
+			if wall_piston_spawner.has_method("pause_spawning"):
+				wall_piston_spawner.pause_spawning()
+	else:
+		print("ProgressionManager: ERROR - wall_piston_spawner es null")
 
 func update_ball_visual(score: int, power: int):
 	"""Actualiza la apariencia visual de la bola según score y poder"""

@@ -1,4 +1,7 @@
-res://Scenes/Misil.tscn
-res://Scripts/misil.gd
-res://Scenes/Enemy.tscn
+res://Scripts/bola.gd
 res://Scripts/enemy.gd
+res://Scripts/GameManager.gd
+res://Scripts/ProgressionManager.gd
+res://Scripts/wall_pistons.gd
+res://Scripts/wall_piston_spawner.gd
+res://Scripts/debug_panel.gd

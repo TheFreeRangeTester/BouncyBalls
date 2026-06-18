@@ -55,10 +55,15 @@ func spawn_enemy():
 	# Altura aleatoria
 	var spawn_y = randf_range(min_spawn_y, max_spawn_y)
 
-	# Posición X inicial
-	var spawn_x = 60  # empieza al lado del límite izquierdo
+	# Posición X inicial aleatoria entre el borde izquierdo y el derecho.
+	var spawn_from_left := randf() < 0.5
+	var spawn_x = 60 if spawn_from_left else get_viewport_rect().size.x - 60
 
 	enemy.global_position = Vector2(spawn_x, spawn_y)
+	if enemy.has_method("set_direction"):
+		enemy.set_direction(1 if spawn_from_left else -1)
+	else:
+		enemy.direction = 1 if spawn_from_left else -1
 	
 	# Asignamos HP aleatorio al enemigo
 	var random_hp = randi_range(min_hp, max_hp)
